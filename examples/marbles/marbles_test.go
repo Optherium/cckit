@@ -5,13 +5,13 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/s7techlab/cckit/convert"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/identity"
-	"github.com/s7techlab/cckit/state"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	"github.com/optherium/cckit/convert"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/identity"
+	"github.com/optherium/cckit/state"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 )
 
 func TestMarbles(t *testing.T) {
@@ -24,7 +24,7 @@ var _ = Describe(`Marbles`, func() {
 	//Create chaincode mock
 	cc := testcc.NewMockStub(`marbles`, New())
 
-	// load actor certificates from github.com/s7techlab/cckit/examples/cert
+	// load actor certificates from github.com/optherium/cckit/examples/cert
 	actors, err := identity.ActorsFromPemFile(
 		`SOME_MSP`,
 		map[string]string{`operator`: `s7techlab.pem`, `owner1`: `victor-nosov.pem`},

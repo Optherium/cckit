@@ -3,7 +3,7 @@ package testing
 import (
 	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric/msp"
-	"github.com/s7techlab/cckit/identity"
+	"github.com/optherium/cckit/identity"
 
 	pmsp "github.com/hyperledger/fabric/protos/msp"
 )

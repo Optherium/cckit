@@ -1,6 +1,6 @@
 # Hyperledger Fabric chaincode kit (CCKit)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/s7techlab/cckit)](https://goreportcard.com/report/github.com/s7techlab/cckit)
+[![Go Report Card](https://goreportcard.com/badge/github.com/optherium/cckit)](https://goreportcard.com/report/github.com/optherium/cckit)
 ![Build](https://api.travis-ci.org/s7techlab/cckit.svg?branch=master)
 [![Coverage Status](https://coveralls.io/repos/github/s7techlab/cckit/badge.svg?branch=master)](https://coveralls.io/github/s7techlab/cckit?branch=master)
 
@@ -58,9 +58,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/router"
-	p "github.com/s7techlab/cckit/router/param"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/router"
+	p "github.com/optherium/cckit/router/param"
 )
 
 var (
@@ -161,10 +161,10 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/extensions/owner"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/extensions/owner"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 )
 
 func TestCars(t *testing.T) {

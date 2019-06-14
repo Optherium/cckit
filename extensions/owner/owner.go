@@ -3,8 +3,8 @@ package owner
 
 import (
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/identity"
-	r "github.com/s7techlab/cckit/router"
+	"github.com/optherium/cckit/identity"
+	r "github.com/optherium/cckit/router"
 )
 
 // OwnerStateKey key used to store owner grant struct in chain code state

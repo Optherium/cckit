@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/router"
-	p "github.com/s7techlab/cckit/router/param"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/router"
+	p "github.com/optherium/cckit/router/param"
 )
 
 var (

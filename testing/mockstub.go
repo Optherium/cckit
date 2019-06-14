@@ -9,7 +9,7 @@ import (
 	"github.com/hyperledger/fabric/msp"
 	"github.com/hyperledger/fabric/protos/peer"
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/convert"
+	"github.com/optherium/cckit/convert"
 )
 
 const EventChannelBufferSize = 100

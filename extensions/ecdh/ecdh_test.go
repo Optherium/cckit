@@ -6,9 +6,9 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/extensions/ecdh"
-	"github.com/s7techlab/cckit/identity"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/extensions/ecdh"
+	"github.com/optherium/cckit/identity"
 )
 
 func TestDebug(t *testing.T) {

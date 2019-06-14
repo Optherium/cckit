@@ -1,11 +1,11 @@
 package encryption
 
 import (
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/state"
 
-	"github.com/s7techlab/cckit/extensions/debug"
-	"github.com/s7techlab/cckit/router"
-	p "github.com/s7techlab/cckit/router/param"
+	"github.com/optherium/cckit/extensions/debug"
+	"github.com/optherium/cckit/router"
+	p "github.com/optherium/cckit/router/param"
 )
 
 type Payment struct {

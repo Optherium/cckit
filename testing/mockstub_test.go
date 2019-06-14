@@ -3,9 +3,9 @@ package testing
 import (
 	"testing"
 
-	"github.com/s7techlab/cckit/examples/cars"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	"github.com/optherium/cckit/examples/cars"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	expectcc "github.com/optherium/cckit/testing/expect"
 
 	"time"
 
@@ -13,7 +13,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/s7techlab/cckit/identity"
+	"github.com/optherium/cckit/identity"
 )
 
 func TestMockstub(t *testing.T) {

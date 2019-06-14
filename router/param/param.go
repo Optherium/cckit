@@ -1,8 +1,8 @@
 package param
 
 import (
-	"github.com/s7techlab/cckit/convert"
-	"github.com/s7techlab/cckit/router"
+	"github.com/optherium/cckit/convert"
+	"github.com/optherium/cckit/router"
 )
 
 // String creates middleware for converting to string chaincode method parameter
