@@ -8,8 +8,8 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/response"
+	"github.com/pkg/errors"
 )
 
 const InitFunc = `init`
@@ -59,6 +59,7 @@ type (
 		contextMiddleware []ContextMiddlewareFunc
 		middleware        []MiddlewareFunc
 		preMiddleware     []ContextMiddlewareFunc
+		errs              map[error]int32
 	}
 )
 
@@ -115,9 +116,12 @@ func (g *Group) HandleContext(c Context) peer.Response {
 			}
 			return h(c)
 		}
-		resp := response.Create(h(c))
+
+		data, err := h(c)
+		resp := response.Create(data, err)
 		if resp.Status != shim.OK {
 			g.logger.Errorf(`%s: %s: %s`, ErrHandlerError, c.Path(), resp.Message)
+			resp.Status = g.getErrorCode(err)
 		}
 		return resp
 	}
@@ -125,6 +129,14 @@ func (g *Group) HandleContext(c Context) peer.Response {
 	err := fmt.Errorf(`%s: %s`, ErrMethodNotFound, c.Path())
 	g.logger.Error(err)
 	return shim.Error(err.Error())
+}
+
+func (g *Group) getErrorCode(err error) int32 {
+	if val, ok := g.errs[err]; ok {
+		return val
+	}
+
+	return shim.ERROR
 }
 
 func (g *Group) Pre(middleware ...ContextMiddlewareFunc) *Group {
@@ -148,6 +160,7 @@ func (g *Group) Group(path string) *Group {
 		contextHandlers: g.contextHandlers,
 		handlers:        g.handlers,
 		middleware:      g.middleware,
+		errs:            g.errs,
 	}
 }
 
@@ -203,6 +216,26 @@ func New(name string) *Group {
 	g.stubHandlers = make(map[string]StubHandlerFunc)
 	g.contextHandlers = make(map[string]ContextHandlerFunc)
 	g.handlers = make(map[string]HandlerFunc)
+	g.errs = map[error]int32{}
+
+	return g
+}
+
+// NewWithErrorMappings - same as new, but adds custom error parser
+func NewWithErrorMappings(name string, errs map[error]int32) *Group {
+
+	logger := shim.NewLogger(name)
+	loggingLevel, err := shim.LogLevel(os.Getenv(`CORE_CHAINCODE_LOGGING_LEVEL`))
+	if err == nil {
+		logger.SetLevel(loggingLevel)
+	}
+
+	g := new(Group)
+	g.logger = logger
+	g.stubHandlers = make(map[string]StubHandlerFunc)
+	g.contextHandlers = make(map[string]ContextHandlerFunc)
+	g.handlers = make(map[string]HandlerFunc)
+	g.errs = errs
 
 	return g
 }
