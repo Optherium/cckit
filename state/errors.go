@@ -5,21 +5,23 @@ import (
 )
 
 var (
-	// ErrUnableToCreateKey can occurs while creating composite key for entry
-	ErrUnableToCreateKey = errors.New(`unable to create state key`)
+	// creating composite key for entry
+	UnableToCreateKeyError = errors.New(`unable to create state key`)
 
-	// ErrKeyAlreadyExists can occurs when trying to insert entry with existing key
-	ErrKeyAlreadyExists = errors.New(`state key already exists`)
+	// insert or Put with more than 2 arguments
+	allowOnlyOneValueError = errors.New(`allow only one value`)
 
-	// ErrrKeyNotFound key not found in chaincode state
-	ErrKeyNotFound = errors.New(`state entry not found`)
+	//insert or Put struct without providing key and struct not support Keyer interface
+	KeyNotSupportKeyerInterfaceError = errors.New(`key not support keyer interface`)
 
-	// ErrAllowOnlyOneValue can occurs when trying to call Insert or Put with more than 2 arguments
-	ErrAllowOnlyOneValue = errors.New(`allow only one value`)
+	//create key consisting of zero parts
+	KeyPartsLengthError = errors.New(`key parts length must be greater than zero`)
 
-	// ErrKeyNotSupportKeyerInterface can occurs when trying to Insert or Put struct without providing key and struct not support Keyer interface
-	ErrKeyNotSupportKeyerInterface = errors.New(`key not support keyer interface`)
+	UnExpectedError = errors.New(`unexpected Error`)
 
-	// ErrKeyPartsLength can occurs when trying to create key consisting of zero parts
-	ErrKeyPartsLength = errors.New(`key parts length must be greater than zero`)
+	SetGetError = errors.New(`set/get Error`)
+
+	AlreadyExistsError = errors.New(`state key already exists`)
+
+	KeyNotFoundError = errors.New(`state entry not found`)
 )

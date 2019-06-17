@@ -65,7 +65,7 @@ var _ = Describe(`Marbles`, func() {
 		It("Disallow chaincode owner to register duplicate marble owner", func() {
 			expectcc.ResponseError(
 				cc.From(actors[`operator`]).Invoke(`marbleOwnerRegister`, actors[`owner1`]),
-				state.ErrKeyAlreadyExists)
+				state.AlreadyExistsError)
 		})
 
 		It("Disallow to pass non SerializedIdentity json", func() {

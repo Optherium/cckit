@@ -60,7 +60,7 @@ var _ = Describe(`Cars`, func() {
 		It("Disallow authority to add duplicate information about car", func() {
 			expectcc.ResponseError(
 				cc.From(actors[`authority`]).Invoke(`carRegister`, Payloads[0]),
-				state.ErrKeyAlreadyExists) //expect car id already exists
+				state.AlreadyExistsError) //expect car id already exists
 		})
 
 		It("Allow everyone to retrieve car information", func() {

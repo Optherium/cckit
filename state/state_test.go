@@ -148,7 +148,7 @@ var _ = Describe(`CRUD`, func() {
 		books := expectcc.PayloadIs(cc.Invoke(`bookList`), &[]Book{}).([]Book)
 		Expect(len(books)).To(Equal(2))
 
-		expectcc.ResponseError(cc.Invoke(`bookGet`, book1.Id), state.ErrKeyNotFound)
+		expectcc.ResponseError(cc.Invoke(`bookGet`, book1.Id), state.KeyNotFoundError)
 	})
 
 })
