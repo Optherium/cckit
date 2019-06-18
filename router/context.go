@@ -135,8 +135,18 @@ func (c *context) Get(key string) interface{} {
 
 func (c *context) SetEvent(name string, payload interface{}) error {
 	bb, err := convert.ToBytes(payload)
+
 	if err != nil {
-		return err
+		c.logger.Error("Can't convert bytes at Context.SetEvent")
+		return UnExpectedError
 	}
-	return c.stub.SetEvent(name, bb)
+
+	err = c.stub.SetEvent(name, bb)
+
+	if err != nil {
+		c.logger.Error("Can't SetEvent at Context.SetEvent")
+		return UnExpectedError
+	}
+
+	return nil
 }
