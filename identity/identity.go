@@ -58,17 +58,23 @@ func FromFile(mspID string, filename string, getContent GetContent) (ci *CertIde
 // FromStub creates Identity interface  from tx creator mspID and certificate (stub.GetCreator)
 func FromStub(stub shim.ChaincodeStubInterface) (ci *CertIdentity, err error) {
 	clientIdentity, err := cid.New(stub)
+
 	if err != nil {
-		return nil, errors.Wrap(err, `client identity from stub`)
+		return nil, CertificateError
 	}
+
 	mspID, err := clientIdentity.GetMSPID()
+
 	if err != nil {
-		return
+		return ci, CertificateError
 	}
+
 	cert, err := clientIdentity.GetX509Certificate()
+
 	if err != nil {
-		return
+		return ci, CertificateError
 	}
+
 	return &CertIdentity{mspID, cert}, nil
 }
 
