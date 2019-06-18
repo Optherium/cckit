@@ -264,7 +264,7 @@ func getValue(key interface{}, values []interface{}) (interface{}, error) {
 	case 1:
 		return values[0], nil
 	default:
-		return nil, allowOnlyOneValueError
+		return nil, AllowOnlyOneValueError
 	}
 }
 

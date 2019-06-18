@@ -9,7 +9,7 @@ var (
 	UnableToCreateKeyError = errors.New(`unable to create state key`)
 
 	// insert or Put with more than 2 arguments
-	allowOnlyOneValueError = errors.New(`allow only one value`)
+	AllowOnlyOneValueError = errors.New(`allow only one value`)
 
 	//insert or Put struct without providing key and struct not support Keyer interface
 	KeyNotSupportKeyerInterfaceError = errors.New(`key not support keyer interface`)
