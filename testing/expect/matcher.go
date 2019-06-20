@@ -31,7 +31,7 @@ func ResponseError(response peer.Response, errorSubstr ...interface{}) {
 	}
 }
 
-func ResponseErrorWithCode(response peer.Response, error interface{}, code int) {
+func ResponseErrorWithCode(response peer.Response, error interface{}, code int32) {
 	g.Expect(int(response.Status)).To(g.Equal(code), response.Message)
 	g.Expect(response.Message).To(g.HavePrefix(fmt.Sprintf(`%s`, error)),
 		"error message not match: "+response.Message)
