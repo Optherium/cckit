@@ -31,6 +31,12 @@ func ResponseError(response peer.Response, errorSubstr ...interface{}) {
 	}
 }
 
+func ResponseErrorWithCode(response peer.Response, error interface{}, code int) {
+	g.Expect(int(response.Status)).To(g.Equal(code), response.Message)
+	g.Expect(response.Message).To(g.HavePrefix(fmt.Sprintf(`%s`, error)),
+		"error message not match: "+response.Message)
+}
+
 // PayloadIs expects peer.Response payload can be marshalled to target interface{} and returns converted value
 func PayloadIs(response peer.Response, target interface{}) interface{} {
 	ResponseOk(response)
