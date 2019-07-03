@@ -66,6 +66,7 @@ type State interface {
 	Put(key interface{}, value ...interface{}) (err error)
 	Insert(key interface{}, value ...interface{}) (err error)
 	List(objectType interface{}, target ...interface{}) (result []interface{}, err error)
+	LimitedList(objectType interface{}, target interface{}, limit int32) (result []interface{}, err error)
 	Delete(key interface{}) (err error)
 }
 
@@ -252,7 +253,7 @@ func (s *StateImpl) List(objectType interface{}, target ...interface{}) (result 
 	return entries, nil
 }
 
-func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, pageSize int32) (result []interface{}, err error) {
+func (s *StateImpl) LimitedList(objectType interface{}, target interface{}, limit int32) (result []interface{}, err error) {
 	keyParts, err := s.KeyParts(objectType)
 
 	if err != nil {
@@ -260,7 +261,7 @@ func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, pag
 		return nil, UnExpectedError
 	}
 
-	iter, _, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], pageSize, keyParts[0])
+	iter, _, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], limit, keyParts[0])
 
 	if err != nil {
 		s.logger.Error("can't get iterator at State.List")
