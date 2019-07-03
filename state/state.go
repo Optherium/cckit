@@ -261,7 +261,7 @@ func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, lim
 		return nil, "", UnExpectedError
 	}
 
-	iter, meta, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], limit, keyParts[0])
+	iter, meta, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], limit, start)
 	end = meta.Bookmark
 	if err != nil {
 		s.logger.Error("can't get iterator at PaginateList.List")
