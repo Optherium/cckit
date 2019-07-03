@@ -67,6 +67,7 @@ type State interface {
 	Insert(key interface{}, value ...interface{}) (err error)
 	List(objectType interface{}, target ...interface{}) (result []interface{}, err error)
 	PaginateList(objectType interface{}, target interface{}, pageSize int32, start string) (result []interface{}, end string, err error)
+	RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error)
 	Delete(key interface{}) (err error)
 }
 
@@ -291,6 +292,42 @@ func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, lim
 		entries = append(entries, entry)
 	}
 	return entries, end, nil
+}
+
+func (s *StateImpl) RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error) {
+	iter, meta, err := s.stub.GetQueryResultWithPagination(query, pageSize, bookmark)
+
+	if err != nil {
+		s.logger.Errorf("Unable to get query result with pagination: %s", err.Error())
+		return nil, "", SetGetError
+	}
+
+	entries := make([]interface{}, 0)
+
+	defer func() {
+		if err := iter.Close(); err != nil {
+			s.logger.Errorf("Unable to close GetQueryResult iterator: ", err.Error())
+		}
+	}()
+
+	for iter.HasNext() {
+		v, err := iter.Next()
+
+		if err != nil {
+			s.logger.Error("can't get next item from iterator at State.RichQueryList")
+			return nil, "", SetGetError
+		}
+
+		entry, err := s.StateGetTransformer(v.Value, target)
+
+		if err != nil {
+			s.logger.Error("can't make StateGetTransformer at State.RichQueryList")
+			return nil, "", UnExpectedError
+		}
+
+		entries = append(entries, entry)
+	}
+	return entries, meta.Bookmark, nil
 }
 
 func getValue(key interface{}, values []interface{}) (interface{}, error) {
