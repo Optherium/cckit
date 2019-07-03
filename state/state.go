@@ -262,11 +262,13 @@ func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, lim
 	}
 
 	iter, meta, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], limit, start)
-	end = meta.Bookmark
+
 	if err != nil {
 		s.logger.Error("can't get iterator at PaginateList.List")
 		return nil, "", SetGetError
 	}
+
+	end = meta.Bookmark
 
 	entries := make([]interface{}, 0)
 	defer func() { _ = iter.Close() }()
