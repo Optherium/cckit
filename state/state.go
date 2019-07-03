@@ -66,7 +66,7 @@ type State interface {
 	Put(key interface{}, value ...interface{}) (err error)
 	Insert(key interface{}, value ...interface{}) (err error)
 	List(objectType interface{}, target ...interface{}) (result []interface{}, err error)
-	LimitedList(objectType interface{}, target interface{}, limit int32) (result []interface{}, err error)
+	PaginateList(objectType interface{}, target interface{}, pageSize int32, start string) (result []interface{}, end string, err error)
 	Delete(key interface{}) (err error)
 }
 
@@ -253,19 +253,19 @@ func (s *StateImpl) List(objectType interface{}, target ...interface{}) (result 
 	return entries, nil
 }
 
-func (s *StateImpl) LimitedList(objectType interface{}, target interface{}, limit int32) (result []interface{}, err error) {
+func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, limit int32, start string) (result []interface{}, end string, err error) {
 	keyParts, err := s.KeyParts(objectType)
 
 	if err != nil {
-		s.logger.Error("can't compose key at State.List")
-		return nil, UnExpectedError
+		s.logger.Error("can't compose key at PaginateList.List")
+		return nil, "", UnExpectedError
 	}
 
-	iter, _, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], limit, keyParts[0])
-
+	iter, meta, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], limit, keyParts[0])
+	end = meta.Bookmark
 	if err != nil {
-		s.logger.Error("can't get iterator at State.List")
-		return nil, SetGetError
+		s.logger.Error("can't get iterator at PaginateList.List")
+		return nil, "", SetGetError
 	}
 
 	entries := make([]interface{}, 0)
@@ -275,20 +275,20 @@ func (s *StateImpl) LimitedList(objectType interface{}, target interface{}, limi
 		v, err := iter.Next()
 
 		if err != nil {
-			s.logger.Error("can't get next item from iterator at State.List")
-			return nil, SetGetError
+			s.logger.Error("can't get next item from iterator at PaginateList.List")
+			return nil, "", SetGetError
 		}
 
 		entry, err := s.StateGetTransformer(v.Value, target)
 
 		if err != nil {
-			s.logger.Error("can't make StateGetTransformer at State.List")
-			return nil, UnExpectedError
+			s.logger.Error("can't make StateGetTransformer at PaginateList.List")
+			return nil, "", UnExpectedError
 		}
 
 		entries = append(entries, entry)
 	}
-	return entries, nil
+	return entries, end, nil
 }
 
 func getValue(key interface{}, values []interface{}) (interface{}, error) {
