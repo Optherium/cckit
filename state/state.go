@@ -252,6 +252,44 @@ func (s *StateImpl) List(objectType interface{}, target ...interface{}) (result 
 	return entries, nil
 }
 
+func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, pageSize int32) (result []interface{}, err error) {
+	keyParts, err := s.KeyParts(objectType)
+
+	if err != nil {
+		s.logger.Error("can't compose key at State.List")
+		return nil, UnExpectedError
+	}
+
+	iter, _, err := s.stub.GetStateByPartialCompositeKeyWithPagination(keyParts[0], keyParts[1:], pageSize, keyParts[0])
+
+	if err != nil {
+		s.logger.Error("can't get iterator at State.List")
+		return nil, SetGetError
+	}
+
+	entries := make([]interface{}, 0)
+	defer func() { _ = iter.Close() }()
+
+	for iter.HasNext() {
+		v, err := iter.Next()
+
+		if err != nil {
+			s.logger.Error("can't get next item from iterator at State.List")
+			return nil, SetGetError
+		}
+
+		entry, err := s.StateGetTransformer(v.Value, target)
+
+		if err != nil {
+			s.logger.Error("can't make StateGetTransformer at State.List")
+			return nil, UnExpectedError
+		}
+
+		entries = append(entries, entry)
+	}
+	return entries, nil
+}
+
 func getValue(key interface{}, values []interface{}) (interface{}, error) {
 	switch len(values) {
 
