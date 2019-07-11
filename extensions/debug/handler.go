@@ -1,10 +1,10 @@
 package debug
 
 import (
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/router"
 	"github.com/optherium/cckit/router/param"
 	"github.com/optherium/cckit/state"
+	"github.com/pkg/errors"
 )
 
 const (

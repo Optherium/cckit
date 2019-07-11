@@ -1,10 +1,10 @@
 package erc20
 
 import (
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/extensions/owner"
 	"github.com/optherium/cckit/router"
 	p "github.com/optherium/cckit/router/param"
+	"github.com/pkg/errors"
 )
 
 const SymbolKey = `symbol`

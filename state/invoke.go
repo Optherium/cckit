@@ -2,8 +2,8 @@ package state
 
 import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/convert"
+	"github.com/pkg/errors"
 )
 
 var (

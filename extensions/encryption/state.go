@@ -3,10 +3,10 @@ package encryption
 import (
 	"encoding/base64"
 
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/convert"
 	"github.com/optherium/cckit/router"
 	"github.com/optherium/cckit/state"
+	"github.com/pkg/errors"
 )
 
 var (

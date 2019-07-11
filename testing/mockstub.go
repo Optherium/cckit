@@ -8,8 +8,8 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/msp"
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/convert"
+	"github.com/pkg/errors"
 )
 
 const EventChannelBufferSize = 100

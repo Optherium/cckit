@@ -3,8 +3,8 @@ package encryption
 import (
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/hyperledger/fabric/core/chaincode/shim/ext/entities"
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/convert"
+	"github.com/pkg/errors"
 )
 
 const TransientMapKey = `ENCODE_KEY`

@@ -1,8 +1,8 @@
 package owner
 
 import (
-	"github.com/pkg/errors"
 	"github.com/optherium/cckit/router"
+	"github.com/pkg/errors"
 )
 
 var (
