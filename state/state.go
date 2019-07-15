@@ -57,6 +57,8 @@ func KeyParts(key interface{}) ([]string, error) {
 	return nil, UnableToCreateKeyError
 }
 
+var stateLogger *shim.ChaincodeLogger
+
 // State interface for chain code CRUD operations
 type State interface {
 	Get(key interface{}, target ...interface{}) (result interface{}, err error)
@@ -79,16 +81,21 @@ type StateImpl struct {
 	logger              *shim.ChaincodeLogger
 }
 
-// New creates wrapper on shim.ChaincodeStubInterface working with state
-func New(stub shim.ChaincodeStubInterface) *StateImpl {
-	logger := shim.NewLogger("StateLogger")
+func InitStateLogger() {
+	stateLogger = shim.NewLogger("StateLogger")
 	loggingLevel, err := shim.LogLevel(os.Getenv(`CORE_CHAINCODE_LOGGING_LEVEL`))
 	if err == nil {
-		logger.SetLevel(loggingLevel)
+		stateLogger.SetLevel(loggingLevel)
 	}
+
+	return
+}
+
+// New creates wrapper on shim.ChaincodeStubInterface working with state
+func New(stub shim.ChaincodeStubInterface) *StateImpl {
 	return &StateImpl{
 		stub:                stub,
-		logger:              logger,
+		logger:              stateLogger,
 		KeyParts:            KeyParts,
 		StateGetTransformer: ConvertFromBytes,
 		StatePutTransformer: ConvertToBytes}

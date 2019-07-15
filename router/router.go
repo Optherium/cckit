@@ -9,6 +9,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
 	"github.com/optherium/cckit/response"
+	"github.com/optherium/cckit/state"
 	"github.com/pkg/errors"
 )
 
@@ -211,6 +212,8 @@ func New(name string) *Group {
 		logger.SetLevel(loggingLevel)
 	}
 
+	state.InitStateLogger()
+
 	g := new(Group)
 	g.logger = logger
 	g.stubHandlers = make(map[string]StubHandlerFunc)
@@ -229,6 +232,8 @@ func NewWithErrorMappings(name string, errs map[error]int32) *Group {
 	if err == nil {
 		logger.SetLevel(loggingLevel)
 	}
+
+	state.InitStateLogger()
 
 	g := new(Group)
 	g.logger = logger
