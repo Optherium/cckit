@@ -70,7 +70,7 @@ type State interface {
 	List(objectType interface{}, target ...interface{}) (result []interface{}, err error)
 	PaginateList(objectType interface{}, target interface{}, pageSize int32, start string) (result []interface{}, end string, err error)
 	RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error)
-	RichQuery(query string, target interface{}) ([]interface{}, error)
+	RichQuery(query string, target interface{}, pageSize int) ([]interface{}, error)
 	Delete(key interface{}) (err error)
 }
 
@@ -302,7 +302,7 @@ func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, lim
 	return entries, end, nil
 }
 
-func (s *StateImpl) RichQuery(query string, target interface{}) ([]interface{}, error) {
+func (s *StateImpl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, error) {
 	iter, err := s.stub.GetQueryResult(query)
 	if err != nil {
 		s.logger.Errorf("Unable to get query result: %s", err.Error())
@@ -317,7 +317,7 @@ func (s *StateImpl) RichQuery(query string, target interface{}) ([]interface{}, 
 		}
 	}()
 
-	for iter.HasNext() {
+	for i := 0; iter.HasNext() && i < pageSize; i++ {
 		v, err := iter.Next()
 
 		if err != nil {
