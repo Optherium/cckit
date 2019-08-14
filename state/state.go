@@ -70,7 +70,7 @@ type State interface {
 	List(objectType interface{}, target ...interface{}) (result []interface{}, err error)
 	PaginateList(objectType interface{}, target interface{}, pageSize int32, start string) (result []interface{}, end string, err error)
 	RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error)
-	RichQuery(query string, target interface{}, pageSize int) ([]interface{}, error)
+	RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error)
 	Delete(key interface{}) (err error)
 }
 
@@ -302,11 +302,11 @@ func (s *StateImpl) PaginateList(objectType interface{}, target interface{}, lim
 	return entries, end, nil
 }
 
-func (s *StateImpl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, error) {
+func (s *StateImpl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error) {
 	iter, err := s.stub.GetQueryResult(query)
 	if err != nil {
 		s.logger.Errorf("Unable to get query result: %s", err.Error())
-		return nil, SetGetError
+		return nil, 0, SetGetError
 	}
 
 	entries := make([]interface{}, 0)
@@ -317,24 +317,31 @@ func (s *StateImpl) RichQuery(query string, target interface{}, pageSize int) ([
 		}
 	}()
 
-	for i := 0; iter.HasNext() && i < pageSize; i++ {
-		v, err := iter.Next()
+	i := 0
 
-		if err != nil {
-			s.logger.Errorf("Unable to get next item from GetQueryResult iterator: %s", err.Error())
-			return nil, SetGetError
+	for iter.HasNext() {
+		if i < pageSize {
+			v, err := iter.Next()
+
+			if err != nil {
+				s.logger.Errorf("Unable to get next item from GetQueryResult iterator: %s", err.Error())
+				return nil, 0, SetGetError
+			}
+
+			entry, err := s.StateGetTransformer(v.Value, target)
+			if err != nil {
+				s.logger.Errorf("Unable to make StateGetTransformer: %s", err.Error())
+				return nil, 0, UnExpectedError
+			}
+
+			entries = append(entries, entry)
+		} else {
+			iter.Next()
 		}
-
-		entry, err := s.StateGetTransformer(v.Value, target)
-		if err != nil {
-			s.logger.Errorf("Unable to make StateGetTransformer: %s", err.Error())
-			return nil, UnExpectedError
-		}
-
-		entries = append(entries, entry)
+		i++
 	}
 
-	return entries, nil
+	return entries, i, nil
 }
 
 func (s *StateImpl) RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error) {
