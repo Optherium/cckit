@@ -1,6 +1,8 @@
 package router
 
 import (
+	"fmt"
+	"runtime"
 	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
@@ -34,6 +36,7 @@ type (
 		Get(string) interface{}
 		Set(string, interface{})
 		SetEvent(string, interface{}) error
+		Errorf(string, ...interface{})
 	}
 
 	context struct {
@@ -45,6 +48,18 @@ type (
 		store      InterfaceMap
 	}
 )
+
+func getCaller() string {
+	pc := make([]uintptr, 15)
+	n := runtime.Callers(3, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+	return fmt.Sprintf("%s:%d %s", frame.File, frame.Line, frame.Function)
+}
+
+func (c *context) Errorf(format string, args ...interface{}) {
+	c.logger.Errorf(fmt.Sprintf("[%s] %s", getCaller(), format), args...)
+}
 
 func (c *context) Stub() shim.ChaincodeStubInterface {
 	return c.stub
