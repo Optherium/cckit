@@ -1,6 +1,9 @@
 package router
 
 import (
+	"fmt"
+	"runtime"
+	"strings"
 	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
@@ -34,6 +37,12 @@ type (
 		Get(string) interface{}
 		Set(string, interface{})
 		SetEvent(string, interface{}) error
+		Errorf(string, ...interface{})
+		Debugf(string, ...interface{})
+		Criticalf(string, ...interface{})
+		Noticef(string, ...interface{})
+		Infof(string, ...interface{})
+		Warningf(string, ...interface{})
 	}
 
 	context struct {
@@ -149,4 +158,40 @@ func (c *context) SetEvent(name string, payload interface{}) error {
 	}
 
 	return nil
+}
+
+func (c *context) Errorf(format string, args ...interface{}) {
+	c.logger.Errorf(fmt.Sprintf("[%s]: %s", getCaller(), format), args...)
+}
+
+func (c *context) Debugf(format string, args ...interface{}) {
+	c.logger.Debugf(fmt.Sprintf("[%s]: %s", getCaller(), format), args...)
+}
+
+func (c *context) Infof(format string, args ...interface{}) {
+	c.logger.Infof(fmt.Sprintf("[%s]: %s", getCaller(), format), args...)
+}
+
+func (c *context) Warningf(format string, args ...interface{}) {
+	c.logger.Warningf(fmt.Sprintf("[%s]: %s", getCaller(), format), args...)
+}
+
+func (c *context) Criticalf(format string, args ...interface{}) {
+	c.logger.Criticalf(fmt.Sprintf("[%s]: %s", getCaller(), format), args...)
+}
+
+func (c *context) Noticef(format string, args ...interface{}) {
+	c.logger.Noticef(fmt.Sprintf("[%s]: %s", getCaller(), format), args...)
+}
+
+func getCaller() string {
+	pc := make([]uintptr, 15)
+	n := runtime.Callers(3, pc)
+	frames := runtime.CallersFrames(pc[:n])
+	frame, _ := frames.Next()
+	fileSplit := strings.Split(frame.File, "/")
+	file := fileSplit[len(fileSplit)-1]
+	functionSplit := strings.Split(frame.Function, ".")
+	function := functionSplit[len(functionSplit)-1]
+	return fmt.Sprintf("%s:%d->%s", file, frame.Line, function)
 }
