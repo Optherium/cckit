@@ -3,6 +3,7 @@ package router
 import (
 	"fmt"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
@@ -54,7 +55,11 @@ func getCaller() string {
 	n := runtime.Callers(3, pc)
 	frames := runtime.CallersFrames(pc[:n])
 	frame, _ := frames.Next()
-	return fmt.Sprintf("%s:%d %s", frame.File, frame.Line, frame.Function)
+	fileSplit := strings.Split(frame.File, "/")
+	file := fileSplit[len(fileSplit)-1]
+	functionSplit := strings.Split(frame.Function, ".")
+	function := functionSplit[len(functionSplit)-1]
+	return fmt.Sprintf("%s:%d %s", file, frame.Line, function)
 }
 
 func (c *context) Errorf(format string, args ...interface{}) {
