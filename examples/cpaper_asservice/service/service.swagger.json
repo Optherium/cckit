@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "service.proto",
+    "title": "Commercial paper service",
     "version": "version not set"
   },
   "schemes": [
@@ -17,6 +17,7 @@
   "paths": {
     "/cpaper": {
       "get": {
+        "summary": "List method returns all registered commercial papers",
         "operationId": "List",
         "responses": {
           "200": {
@@ -33,6 +34,7 @@
     },
     "/cpaper/buy": {
       "post": {
+        "summary": "Buy commercial paper",
         "operationId": "Buy",
         "responses": {
           "200": {
@@ -42,6 +44,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schemaBuyCommercialPaper"
+            }
+          }
+        ],
         "tags": [
           "CPaper"
         ]
@@ -49,6 +61,7 @@
     },
     "/cpaper/extid/{id}": {
       "get": {
+        "summary": "GetByExternalId",
         "operationId": "GetByExternalId",
         "responses": {
           "200": {
@@ -73,6 +86,7 @@
     },
     "/cpaper/issue": {
       "post": {
+        "summary": "Issue commercial paper",
         "operationId": "Issue",
         "responses": {
           "200": {
@@ -82,6 +96,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schemaIssueCommercialPaper"
+            }
+          }
+        ],
         "tags": [
           "CPaper"
         ]
@@ -89,6 +113,7 @@
     },
     "/cpaper/redeem": {
       "post": {
+        "summary": "Redeem commercial paper",
         "operationId": "Redeem",
         "responses": {
           "200": {
@@ -98,6 +123,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/schemaRedeemCommercialPaper"
+            }
+          }
+        ],
         "tags": [
           "CPaper"
         ]
@@ -105,6 +140,7 @@
     },
     "/cpaper/{issuer}/{paper_number}": {
       "get": {
+        "summary": "Get method returns commercial paper data by id",
         "operationId": "Get",
         "responses": {
           "200": {
@@ -133,6 +169,7 @@
         ]
       },
       "delete": {
+        "summary": "Delete commercial paper",
         "operationId": "Delete",
         "responses": {
           "200": {
@@ -171,6 +208,32 @@
         "REDEEMED"
       ],
       "default": "ISSUED"
+    },
+    "schemaBuyCommercialPaper": {
+      "type": "object",
+      "properties": {
+        "issuer": {
+          "type": "string"
+        },
+        "paper_number": {
+          "type": "string"
+        },
+        "current_owner": {
+          "type": "string"
+        },
+        "new_owner": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "purchase_date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "title": "BuyCommercialPaper event"
     },
     "schemaCommercialPaper": {
       "type": "object",
@@ -218,6 +281,53 @@
         }
       },
       "title": "Container for returning multiple entities"
+    },
+    "schemaIssueCommercialPaper": {
+      "type": "object",
+      "properties": {
+        "issuer": {
+          "type": "string"
+        },
+        "paper_number": {
+          "type": "string"
+        },
+        "issue_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "maturity_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "face_value": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "external_id": {
+          "type": "string",
+          "title": "external_id  - once more uniq id of state entry"
+        }
+      },
+      "title": "IssueCommercialPaper event"
+    },
+    "schemaRedeemCommercialPaper": {
+      "type": "object",
+      "properties": {
+        "issuer": {
+          "type": "string"
+        },
+        "paper_number": {
+          "type": "string"
+        },
+        "redeeming_owner": {
+          "type": "string"
+        },
+        "redeem_date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "title": "RedeemCommercialPaper event"
     }
   }
 }
