@@ -2,7 +2,6 @@ package state
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 	"strings"
 
@@ -153,8 +152,6 @@ type Impl struct {
 	StateGetTransformer FromBytesTransformer
 	StatePutTransformer ToBytesTransformer
 }
-
-var stateLogger *shim.ChaincodeLogger
 
 // NewState creates wrapper on shim.ChaincodeStubInterface for working with state
 func NewState(stub shim.ChaincodeStubInterface, logger *shim.ChaincodeLogger) *Impl {
@@ -574,16 +571,6 @@ func (s *Impl) DeletePrivate(collection string, entry interface{}) error {
 	}
 	s.logger.Debugf(`private state DELETE with string key: %s`, key.String)
 	return s.stub.DelPrivateData(collection, key.String)
-}
-
-func InitStateLogger() {
-	stateLogger = shim.NewLogger("StateLogger")
-	loggingLevel, err := shim.LogLevel(os.Getenv(`CORE_CHAINCODE_LOGGING_LEVEL`))
-	if err == nil {
-		stateLogger.SetLevel(loggingLevel)
-	}
-
-	return
 }
 
 func (s *Impl) PaginateList(objectType interface{}, target interface{}, limit int32, start string) (result []interface{}, end string, err error) {

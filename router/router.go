@@ -3,7 +3,6 @@ package router
 
 import (
 	"fmt"
-	"github.com/optherium/cckit/state"
 	"os"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -242,8 +241,6 @@ func New(name string) *Group {
 	g.contextHandlers = make(map[string]ContextHandlerFunc)
 	g.handlers = make(map[string]*HandlerMeta)
 
-	state.InitStateLogger()
-
 	return g
 }
 
@@ -255,8 +252,6 @@ func NewWithErrorMappings(name string, errs map[error]int32) *Group {
 	g.contextHandlers = make(map[string]ContextHandlerFunc)
 	g.handlers = make(map[string]*HandlerMeta)
 	g.errs = errs
-
-	state.InitStateLogger()
 
 	return g
 }
