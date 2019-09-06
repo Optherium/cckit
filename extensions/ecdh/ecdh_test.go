@@ -8,9 +8,9 @@ import (
 
 	"fmt"
 
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/extensions/ecdh"
-	testcc "github.com/s7techlab/cckit/testing"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/extensions/ecdh"
+	testcc "github.com/optherium/cckit/testing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

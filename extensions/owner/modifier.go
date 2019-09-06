@@ -2,7 +2,7 @@ package owner
 
 import (
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/router"
+	"github.com/optherium/cckit/router"
 )
 
 var (

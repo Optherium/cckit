@@ -9,7 +9,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/msp"
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/s7techlab/cckit/testing"
+	"github.com/optherium/cckit/testing"
 )
 
 const (

@@ -10,7 +10,7 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
-	schema "github.com/s7techlab/cckit/examples/cpaper_asservice/schema"
+	schema "github.com/optherium/cckit/examples/cpaper_asservice/schema"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	math "math"

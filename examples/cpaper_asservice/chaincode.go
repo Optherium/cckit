@@ -3,10 +3,10 @@ package cpaper_asservice
 //go:generate make
 
 import (
-	"github.com/s7techlab/cckit/examples/cpaper_asservice/service"
-	"github.com/s7techlab/cckit/extensions/encryption"
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/router"
+	"github.com/optherium/cckit/examples/cpaper_asservice/service"
+	"github.com/optherium/cckit/extensions/encryption"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/router"
 )
 
 func CCRouter(name string) (*router.Group, error) {

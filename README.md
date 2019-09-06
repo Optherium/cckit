@@ -1,9 +1,5 @@
 # Hyperledger Fabric chaincode kit (CCKit)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/s7techlab/cckit)](https://goreportcard.com/report/github.com/s7techlab/cckit)
-![Build](https://api.travis-ci.org/s7techlab/cckit.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/s7techlab/cckit/badge.svg?branch=master)](https://coveralls.io/github/s7techlab/cckit?branch=master)
-
 ## Overview
 
 A [smart contract](https://hyperledger-fabric.readthedocs.io/en/latest/glossary.html#smart-contract) is code, 
@@ -73,7 +69,7 @@ CCKit requires Go 1.11+ with modules support
 
 ### As dependency
 
-`go get -u github.com/s7techlab/cckit`
+`go get -u github.com/optherium/cckit`
 
 ## Example - Commercial Paper chaincode
 

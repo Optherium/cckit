@@ -1,6 +1,6 @@
 package state
 
-import "github.com/s7techlab/cckit/convert"
+import "github.com/optherium/cckit/convert"
 
 type (
 	// ToBytesTransformer is used after getState operation for convert value

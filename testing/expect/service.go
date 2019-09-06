@@ -2,7 +2,7 @@ package expect
 
 import (
 	g "github.com/onsi/gomega"
-	"github.com/s7techlab/cckit/testing"
+	"github.com/optherium/cckit/testing"
 )
 
 type (

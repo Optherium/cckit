@@ -9,15 +9,15 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/hyperledger/fabric/protos/peer"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/examples/payment"
-	"github.com/s7techlab/cckit/examples/payment/schema"
-	"github.com/s7techlab/cckit/extensions/encryption"
-	"github.com/s7techlab/cckit/extensions/encryption/testdata"
-	"github.com/s7techlab/cckit/state"
-	"github.com/s7techlab/cckit/state/mapping"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/examples/payment"
+	"github.com/optherium/cckit/examples/payment/schema"
+	"github.com/optherium/cckit/extensions/encryption"
+	"github.com/optherium/cckit/extensions/encryption/testdata"
+	"github.com/optherium/cckit/state"
+	"github.com/optherium/cckit/state/mapping"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 )
 
 func TestEncryption(t *testing.T) {

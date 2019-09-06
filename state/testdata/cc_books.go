@@ -1,11 +1,11 @@
 package testdata
 
 import (
-	"github.com/s7techlab/cckit/extensions/debug"
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/router"
-	p "github.com/s7techlab/cckit/router/param"
-	"github.com/s7techlab/cckit/state/testdata/schema"
+	"github.com/optherium/cckit/extensions/debug"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/router"
+	p "github.com/optherium/cckit/router/param"
+	"github.com/optherium/cckit/state/testdata/schema"
 )
 
 const collection = "SampleCollection"

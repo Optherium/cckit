@@ -1,7 +1,7 @@
 package testdata
 
 import (
-	"github.com/s7techlab/cckit/state/testdata/schema"
+	"github.com/optherium/cckit/state/testdata/schema"
 )
 
 var Books = []schema.Book{{

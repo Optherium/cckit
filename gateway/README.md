@@ -239,7 +239,7 @@ package service;
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "github.com/s7techlab/cckit/examples/cpaper_asservice/schema/schema.proto";
+import "github.com/optherium/cckit/examples/cpaper_asservice/schema/schema.proto";
 
 service CPaper {
     // List method returns all registered commercial papers
@@ -299,7 +299,7 @@ Chaincode-as-service gateway generator allows to generate auxiliary components f
  
 Install the `protoc-gen-cc-gateway` generator:
 
-`GO111MODULE=on go install github.com/s7techlab/cckit/gateway/protoc-gen-cc-gateway`
+`GO111MODULE=on go install github.com/optherium/cckit/gateway/protoc-gen-cc-gateway`
 
 For documentation generation install [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc):
 
@@ -486,8 +486,8 @@ For example, [Commercial Paper as service](../examples/cpaper_asservice/service/
 // source: service.proto
 
 import (
-	cckit_router "github.com/s7techlab/cckit/router"
-	cckit_defparam "github.com/s7techlab/cckit/router/param/defparam"
+	cckit_router "github.com/optherium/cckit/router"
+	cckit_defparam "github.com/optherium/cckit/router/param/defparam"
 )
 
 const (
@@ -589,8 +589,8 @@ For example, [generated chaincode gateway](../examples/cpaper_asservice/service/
 // source: service.proto
 
 import (
-    cckit_ccservice "github.com/s7techlab/cckit/gateway/service"
-	cckit_gateway "github.com/s7techlab/cckit/gateway"
+    cckit_ccservice "github.com/optherium/cckit/gateway/service"
+	cckit_gateway "github.com/optherium/cckit/gateway"
 )
 	
 // gateway implementation
@@ -645,11 +645,11 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/s7techlab/cckit/examples/cpaper_asservice"
-	cpaperservice "github.com/s7techlab/cckit/examples/cpaper_asservice/service"
-	"github.com/s7techlab/cckit/gateway"
-	"github.com/s7techlab/cckit/gateway/service"
-	"github.com/s7techlab/cckit/testing"
+	"github.com/optherium/cckit/examples/cpaper_asservice"
+	cpaperservice "github.com/optherium/cckit/examples/cpaper_asservice/service"
+	"github.com/optherium/cckit/gateway"
+	"github.com/optherium/cckit/gateway/service"
+	"github.com/optherium/cckit/testing"
 	"google.golang.org/grpc"
 )
 

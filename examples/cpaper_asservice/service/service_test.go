@@ -10,11 +10,11 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/s7techlab/cckit/examples/cpaper_asservice/schema"
-	"github.com/s7techlab/cckit/examples/cpaper_asservice/service"
-	"github.com/s7techlab/cckit/router"
-	testcc "github.com/s7techlab/cckit/testing"
-	"github.com/s7techlab/cckit/testing/expect"
+	"github.com/optherium/cckit/examples/cpaper_asservice/schema"
+	"github.com/optherium/cckit/examples/cpaper_asservice/service"
+	"github.com/optherium/cckit/router"
+	testcc "github.com/optherium/cckit/testing"
+	"github.com/optherium/cckit/testing/expect"
 )
 
 func TestCommercialPaperService(t *testing.T) {

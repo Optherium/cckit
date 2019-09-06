@@ -8,7 +8,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/state/schema"
+	"github.com/optherium/cckit/state/schema"
 )
 
 type (

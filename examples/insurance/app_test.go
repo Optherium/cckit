@@ -3,12 +3,12 @@ package insurance
 import (
 	"testing"
 
-	"github.com/s7techlab/cckit/examples/insurance/app"
+	"github.com/optherium/cckit/examples/insurance/app"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 )
 
 func TestInsuranceApp(t *testing.T) {

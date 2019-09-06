@@ -3,12 +3,12 @@ package cars_test
 import (
 	"testing"
 
-	"github.com/s7techlab/cckit/examples/cars"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/state"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	"github.com/optherium/cckit/examples/cars"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/state"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

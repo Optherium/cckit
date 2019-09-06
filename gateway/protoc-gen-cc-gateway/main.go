@@ -10,7 +10,7 @@ import (
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"
 	"github.com/grpc-ecosystem/grpc-gateway/codegenerator"
 	"github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway/descriptor"
-	"github.com/s7techlab/cckit/gateway/protoc-gen-cc-gateway/generator"
+	"github.com/optherium/cckit/gateway/protoc-gen-cc-gateway/generator"
 )
 
 var (

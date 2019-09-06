@@ -5,7 +5,7 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/lib/cid"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/state"
 )
 
 // Default parameter name

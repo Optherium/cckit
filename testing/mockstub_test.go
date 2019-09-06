@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/s7techlab/cckit/examples/cars"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	"github.com/optherium/cckit/examples/cars"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 	"github.com/s7techlab/hlf-sdk-go/api"
 
 	. "github.com/onsi/ginkgo"

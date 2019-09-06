@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/s7techlab/cckit/response"
-	"github.com/s7techlab/cckit/testing"
+	"github.com/optherium/cckit/response"
+	"github.com/optherium/cckit/testing"
 )
 
 // MockInvoke helper for invoking MockStub with transient key and encrypted args

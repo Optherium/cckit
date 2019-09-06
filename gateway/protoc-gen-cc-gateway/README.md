@@ -13,7 +13,7 @@ Chaincode-as-service gateway generator allows to generate from gRPC service defi
 
 ### Install the generator
 
-`GO111MODULE=on go install github.com/s7techlab/cckit/gateway/protoc-gen-cc-gateway`
+`GO111MODULE=on go install github.com/optherium/cckit/gateway/protoc-gen-cc-gateway`
 
 
 

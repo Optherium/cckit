@@ -2,9 +2,9 @@ package debug
 
 import (
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/router"
-	"github.com/s7techlab/cckit/router/param"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/router"
+	"github.com/optherium/cckit/router/param"
+	"github.com/optherium/cckit/state"
 )
 
 const (

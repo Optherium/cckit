@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/state"
 )
 
 type (

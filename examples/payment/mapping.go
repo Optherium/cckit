@@ -1,8 +1,8 @@
 package payment
 
 import (
-	"github.com/s7techlab/cckit/examples/payment/schema"
-	m "github.com/s7techlab/cckit/state/mapping"
+	"github.com/optherium/cckit/examples/payment/schema"
+	m "github.com/optherium/cckit/state/mapping"
 )
 
 var (
