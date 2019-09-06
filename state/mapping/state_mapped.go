@@ -2,7 +2,7 @@ package mapping
 
 import (
 	"github.com/golang/protobuf/proto"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/state"
 )
 
 type (

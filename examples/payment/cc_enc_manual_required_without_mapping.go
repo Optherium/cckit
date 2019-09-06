@@ -1,13 +1,13 @@
 package payment
 
 import (
-	"github.com/s7techlab/cckit/examples/payment/schema"
-	"github.com/s7techlab/cckit/extensions/debug"
-	"github.com/s7techlab/cckit/extensions/encryption"
-	"github.com/s7techlab/cckit/router"
-	p "github.com/s7techlab/cckit/router/param"
-	"github.com/s7techlab/cckit/state"
-	m "github.com/s7techlab/cckit/state/mapping"
+	"github.com/optherium/cckit/examples/payment/schema"
+	"github.com/optherium/cckit/extensions/debug"
+	"github.com/optherium/cckit/extensions/encryption"
+	"github.com/optherium/cckit/router"
+	p "github.com/optherium/cckit/router/param"
+	"github.com/optherium/cckit/state"
+	m "github.com/optherium/cckit/state/mapping"
 )
 
 // Chaincode with required encrypting (encrypting key must be provided in transient map)

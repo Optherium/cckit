@@ -1,8 +1,8 @@
 package defparam
 
 import (
-	"github.com/s7techlab/cckit/router"
-	"github.com/s7techlab/cckit/router/param"
+	"github.com/optherium/cckit/router"
+	"github.com/optherium/cckit/router/param"
 )
 
 func Proto(target interface{}, argPoss ...int) router.MiddlewareFunc {

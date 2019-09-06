@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/s7techlab/cckit/examples/insurance/app"
+	"github.com/optherium/cckit/examples/insurance/app"
 )
 
 var logger = shim.NewLogger("main")

@@ -3,9 +3,9 @@ package encryption
 import (
 	"github.com/hyperledger/fabric/protos/peer"
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/response"
-	"github.com/s7techlab/cckit/router"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/response"
+	"github.com/optherium/cckit/router"
+	"github.com/optherium/cckit/state"
 )
 
 // ArgsDecryptIfKeyProvided  - pre middleware, decrypts chaincode method arguments if key provided in transient map

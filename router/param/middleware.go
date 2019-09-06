@@ -1,7 +1,7 @@
 package param
 
 import (
-	"github.com/s7techlab/cckit/router"
+	"github.com/optherium/cckit/router"
 )
 
 // StrictKnown allows passing arguments to chaincode func only if parameters are defined in router

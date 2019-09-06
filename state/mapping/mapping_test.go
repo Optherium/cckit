@@ -8,14 +8,14 @@ import (
 	"github.com/hyperledger/fabric/protos/peer"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/state"
-	"github.com/s7techlab/cckit/state/mapping"
-	"github.com/s7techlab/cckit/state/mapping/testdata"
-	"github.com/s7techlab/cckit/state/mapping/testdata/schema"
-	state_schema "github.com/s7techlab/cckit/state/schema"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/state"
+	"github.com/optherium/cckit/state/mapping"
+	"github.com/optherium/cckit/state/mapping/testdata"
+	"github.com/optherium/cckit/state/mapping/testdata/schema"
+	state_schema "github.com/optherium/cckit/state/schema"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 )
 
 func TestState(t *testing.T) {
@@ -185,6 +185,17 @@ var _ = Describe(`Mapping`, func() {
 			Expect(len(cpapers.Items)).To(Equal(2))
 			expectcc.ResponseError(protoCC.Invoke(`get`, toDelete), state.ErrKeyNotFound)
 		})
+
+		It("Allow to insert entry once more time", func() {
+			expectcc.ResponseOk(protoCC.Invoke(`issue`, &issueMock1))
+
+			cpaperFromCCByExtID := expectcc.PayloadIs(
+				protoCC.Query(`getByExternalId`, issueMock1.ExternalId),
+				&schema.ProtoEntity{}).(*schema.ProtoEntity)
+
+			Expect(cpaperFromCCByExtID.IdFirstPart).To(Equal(issueMock1.IdFirstPart))
+		})
+
 	})
 
 	Describe(`Entity with complex id`, func() {

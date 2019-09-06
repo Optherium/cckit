@@ -8,7 +8,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/state/schema"
+	"github.com/optherium/cckit/state/schema"
 )
 
 type (
@@ -19,7 +19,7 @@ type (
 	}
 )
 
-func NewStateList(config ...interface{}) (sl *StateList, err error) {
+func NewStateList(config ...interface{}) *StateList {
 	var (
 		itemTarget, listTarget interface{}
 	)
@@ -30,7 +30,7 @@ func NewStateList(config ...interface{}) (sl *StateList, err error) {
 		listTarget = config[1]
 	}
 
-	return &StateList{itemTarget: itemTarget, listTarget: listTarget}, nil
+	return &StateList{itemTarget: itemTarget, listTarget: listTarget}
 }
 
 func (sl *StateList) Fill(

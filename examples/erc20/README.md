@@ -83,7 +83,7 @@ In particular, you may make access control decisions based on either or both of 
  * the client identity's MSP (Membership Service Provider) ID
  * an attribute associated with the client identity
 
-CCkit contains [identity](https://github.com/s7techlab/cckit/tree/master/identity) package with structures and functions 
+CCkit contains [identity](https://github.com/optherium/cckit/tree/master/identity) package with structures and functions 
 can that be used for implementing access control in chaincode. 
 
 ## Getting started with example
@@ -96,13 +96,13 @@ and get dependencies using `dep` command:
 
 `dep ensure -vendor-only`
 
-ERC20 example is located in [examples/erc20](https://github.com/s7techlab/cckit/tree/master/examples/erc20) directory.
+ERC20 example is located in [examples/erc20](https://github.com/optherium/cckit/tree/master/examples/erc20) directory.
 
 
 
 ## Defining token smart contract functions
 
-First, we need to define chaincode functions. In our example we use [router](https://github.com/s7techlab/cckit/tree/master/router) 
+First, we need to define chaincode functions. In our example we use [router](https://github.com/optherium/cckit/tree/master/router) 
 package from CCkit, that allows us to define chaincode methods and their parameters in consistent way. 
 
 At first we define `init` function (smart contract constructor) with arguments `symbol`, `name` and `totalSupply`. 
@@ -110,7 +110,7 @@ After that we define chaincode methods, implementing ERC20 interface, adopted to
 (pair of MSP Id and certificate ID). All querying method are prefixed with `query`, all writing to state methods are prefixed with
 `invoke`.
 
-As a result we use [default chaincode](https://github.com/s7techlab/cckit/blob/master/router/chaincode.go) structure, 
+As a result we use [default chaincode](https://github.com/optherium/cckit/blob/master/router/chaincode.go) structure, 
 that delegates `Init` and `Invoke` handling to router.
 
 ```go
@@ -148,7 +148,7 @@ func NewErc20FixedSupply() *router.Chaincode {
 Chaincode `init` function (token constructor) performs the following actions:
 
 * puts to chaincode state information about chaincode owner, using 
-  [owner](https://github.com/s7techlab/cckit/tree/master/extensions/owner) extension from CCkit
+  [owner](https://github.com/optherium/cckit/tree/master/extensions/owner) extension from CCkit
 * puts to chaincode state token configuration - token symbol, name and total supply
 * sets chaincode owner balance with total supply
 
@@ -189,8 +189,8 @@ func invokeInitFixedSupply(c router.Context) (interface{}, error) {
 
 ## Defining events structure types
 
-We use [Id](https://github.com/s7techlab/cckit/blob/master/identity/entry.go) structure from 
-[identity](https://github.com/s7techlab/cckit/tree/master/identity) package:
+We use [Id](https://github.com/optherium/cckit/blob/master/identity/entry.go) structure from 
+[identity](https://github.com/optherium/cckit/tree/master/identity) package:
 ```go
 // Id structure defines short id representation
 type Id struct {
@@ -310,7 +310,7 @@ func balanceKey(ownerMspId, ownerCertId string) []string {
 
 ## Testing 
 
-Also, we can fast test our chaincode via CCkit [MockStub](https://github.com/s7techlab/cckit/tree/master/testing).  
+Also, we can fast test our chaincode via CCkit [MockStub](https://github.com/optherium/cckit/tree/master/testing).  
 
 To start testing we init chaincode via MockStub with test parameters:
 

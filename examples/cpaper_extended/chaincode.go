@@ -4,13 +4,13 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/examples/cpaper_extended/schema"
-	"github.com/s7techlab/cckit/extensions/debug"
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/router"
-	"github.com/s7techlab/cckit/router/param"
-	"github.com/s7techlab/cckit/router/param/defparam"
-	m "github.com/s7techlab/cckit/state/mapping"
+	"github.com/optherium/cckit/examples/cpaper_extended/schema"
+	"github.com/optherium/cckit/extensions/debug"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/router"
+	"github.com/optherium/cckit/router/param"
+	"github.com/optherium/cckit/router/param/defparam"
+	m "github.com/optherium/cckit/state/mapping"
 )
 
 var (

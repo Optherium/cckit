@@ -28,4 +28,17 @@ var (
 
 	// ErrKeyPartsLength can occurs when trying to create key consisting of zero parts
 	ErrKeyPartsLength = errors.New(`key parts length must be greater than zero`)
+
+	UnexpectedError = errors.New(`unexpected error`)
+
+	SetGetError = errors.New(`set/get error`)
+
+	KeyNotFoundError = errors.New("state entry not found")
+
+	AlreadyExistsError = errors.New(`state key already exists`)
+
+	// Rich query related errors
+	NoQuerySelectorError = errors.New(`No selector provided for rich query`)
+
+	InvalidSortQueryError = errors.New(`Invalid syntax for sort query`)
 )

@@ -1,6 +1,4 @@
-# Hyperledger Fabric chaincode kit (CCKit)
-
-## Chaincode state 
+# Working with Hyperledger Fabric chaincode state with CCKit
 
 Chaincode is a domain specific program which relates to specific business process. It programmatically accesses 
 two distinct pieces of the ledger – a blockchain, which immutably records the history of all transactions, and a world state
@@ -165,7 +163,6 @@ and [json.Umarshal](https://golang.org/pkg/encoding/json/#Unmarshal) methods.
 [proto.Unmarshal](https://godoc.org/github.com/golang/protobuf/proto#Unmarshal) is used to convert protobuf.
 
 ### Creating state keys
-
 
 In the chaincode data model we often need to store many instances of one type on the ledger, such as multiple commercial papers,
 letters of credit, and so on.  In this case, the keys of those instances will be typically constructed from a combination of attributes—
@@ -370,13 +367,13 @@ import (
 	"fmt"
 	
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/examples/cpaper/schema"
-	"github.com/s7techlab/cckit/extensions/debug"
-	"github.com/s7techlab/cckit/extensions/encryption"
-	"github.com/s7techlab/cckit/extensions/owner"
-	"github.com/s7techlab/cckit/router"
-	"github.com/s7techlab/cckit/router/param/defparam"
-	m "github.com/s7techlab/cckit/state/mapping"
+	"github.com/optherium/cckit/examples/cpaper/schema"
+	"github.com/optherium/cckit/extensions/debug"
+	"github.com/optherium/cckit/extensions/encryption"
+	"github.com/optherium/cckit/extensions/owner"
+	"github.com/optherium/cckit/router"
+	"github.com/optherium/cckit/router/param/defparam"
+	m "github.com/optherium/cckit/state/mapping"
 )
 
 
@@ -516,16 +513,16 @@ import (
 	"github.com/golang/protobuf/ptypes"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/s7techlab/cckit/examples/cpaper/schema"
-	"github.com/s7techlab/cckit/examples/cpaper/testdata"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/examples/cpaper/schema"
+	"github.com/optherium/cckit/examples/cpaper/testdata"
+	"github.com/optherium/cckit/state"
 
-	"github.com/s7techlab/cckit/examples/cpaper"
+	"github.com/optherium/cckit/examples/cpaper"
 
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	"github.com/s7techlab/cckit/identity"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	"github.com/optherium/cckit/identity"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

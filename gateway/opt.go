@@ -4,23 +4,18 @@ import (
 	"context"
 
 	"github.com/hyperledger/fabric/msp"
+	"github.com/optherium/cckit/extensions/encryption"
+
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/s7techlab/cckit/extensions/encryption"
-	"github.com/s7techlab/cckit/gateway/service"
+	"github.com/optherium/cckit/gateway/service"
 )
 
-type Chaincode interface {
-	Query(ctx context.Context, fn string, args []interface{}, target interface{}) (interface{}, error)
-	Invoke(ctx context.Context, fn string, args []interface{}, target interface{}) (interface{}, error)
-	Events(ctx context.Context) (ChaincodeEventSub, error)
-}
+type Opt func(*chaincode)
 
-type ChaincodeEventSub interface {
-	Context() context.Context
-	Events() <-chan *peer.ChaincodeEvent
-	Recv(*peer.ChaincodeEvent) error
-	Close()
-}
+type ContextOpt func(ctx context.Context) context.Context
+type InputOpt func(action Action, input *service.ChaincodeInput) error
+type OutputOpt func(action Action, response *peer.Response) error
+type EventOpt func(event *peer.ChaincodeEvent) error
 
 func WithDefaultSigner(defaultSigner msp.SigningIdentity) Opt {
 	return func(c *chaincode) {

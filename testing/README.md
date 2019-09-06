@@ -4,7 +4,7 @@
 
 Testing stage is a critical requirement for software quality assurance, doesn't matter is this  
 web application or a smart contract. Tests must be fast enough to run on every commit to repository. 
-[CCKit](https://github.com/s7techlab/cckit/), programming toolkit for developing and testing Hyperledger Fabric Golang 
+[CCKit](https://github.com/optherium/cckit/), programming toolkit for developing and testing Hyperledger Fabric Golang 
 chaincodes, enhances the development experience with extended version of MockStub for chaincode testing. 
 
 ### Steps in chaincode development process
@@ -191,11 +191,11 @@ package main
 import (
 	"fmt"
 	"testing"
-	"github.com/s7techlab/cckit/examples/insurance/app"
+	"github.com/optherium/cckit/examples/insurance/app"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 )
 
 func TestCommercialPaper(t *testing.T) {

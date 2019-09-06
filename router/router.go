@@ -7,7 +7,7 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/s7techlab/cckit/response"
+	"github.com/optherium/cckit/response"
 )
 
 type (
@@ -51,6 +51,8 @@ type (
 
 		preMiddleware   []ContextMiddlewareFunc
 		afterMiddleware []MiddlewareFunc
+
+		errs map[error]int32
 	}
 
 	Router interface {
@@ -135,9 +137,12 @@ func (g *Group) handleContext(c Context) peer.Response {
 
 			return h(c)
 		}
-		resp := response.Create(h(c))
+
+		data, err := h(c)
+		resp := response.Create(data, err)
 		if resp.Status != shim.OK {
 			g.logger.Errorf(`%s: %s: %s`, ErrHandlerError, c.Path(), resp.Message)
+			resp.Status = g.getErrorCode(err)
 		}
 		return resp
 	}
@@ -145,6 +150,14 @@ func (g *Group) handleContext(c Context) peer.Response {
 	err := fmt.Errorf(`%s: %s`, ErrMethodNotFound, c.Path())
 	g.logger.Error(err)
 	return shim.Error(err.Error())
+}
+
+func (g *Group) getErrorCode(err error) int32 {
+	if val, ok := g.errs[err]; ok {
+		return val
+	}
+
+	return shim.ERROR
 }
 
 func (g *Group) Pre(middleware ...ContextMiddlewareFunc) *Group {
@@ -217,22 +230,47 @@ func (g *Group) Init(handler HandlerFunc, middleware ...MiddlewareFunc) *Group {
 
 // Context returns chain code invoke context  for provided path and stub
 func (g *Group) Context(stub shim.ChaincodeStubInterface) Context {
-	return &context{stub: stub, logger: g.logger}
+	return NewContext(stub, g.logger)
 }
 
 // New group of chain code functions
 func New(name string) *Group {
+	g := new(Group)
+	g.logger = NewLogger(name)
+	g.stubHandlers = make(map[string]StubHandlerFunc)
+	g.contextHandlers = make(map[string]ContextHandlerFunc)
+	g.handlers = make(map[string]*HandlerMeta)
+
+	return g
+}
+
+// NewWithErrorMappings - new group of chain code functions with error mappings
+func NewWithErrorMappings(name string, errs map[error]int32) *Group {
+	g := new(Group)
+	g.logger = NewLogger(name)
+	g.stubHandlers = make(map[string]StubHandlerFunc)
+	g.contextHandlers = make(map[string]ContextHandlerFunc)
+	g.handlers = make(map[string]*HandlerMeta)
+	g.errs = errs
+
+	return g
+}
+
+// NewContext creates new instance of router.Context
+func NewContext(stub shim.ChaincodeStubInterface, logger *shim.ChaincodeLogger) *context {
+	return &context{
+		stub:   stub,
+		logger: logger,
+	}
+}
+
+// NewLogger creates new instance of shim.ChaincodeLogger
+func NewLogger(name string) *shim.ChaincodeLogger {
 	logger := shim.NewLogger(name)
 	loggingLevel, err := shim.LogLevel(os.Getenv(`CORE_CHAINCODE_LOGGING_LEVEL`))
 	if err == nil {
 		logger.SetLevel(loggingLevel)
 	}
 
-	g := new(Group)
-	g.logger = logger
-	g.stubHandlers = make(map[string]StubHandlerFunc)
-	g.contextHandlers = make(map[string]ContextHandlerFunc)
-	g.handlers = make(map[string]*HandlerMeta)
-
-	return g
+	return logger
 }

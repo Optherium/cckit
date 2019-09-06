@@ -5,8 +5,8 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/state"
-	"github.com/s7techlab/cckit/state/schema"
+	"github.com/optherium/cckit/state"
+	"github.com/optherium/cckit/state/schema"
 )
 
 type (
@@ -29,6 +29,18 @@ type (
 	}
 )
 
+func (s *Impl) PaginateList(objectType interface{}, target interface{}, pageSize int32, start string) (result []interface{}, end string, err error) {
+	return nil, "", nil
+}
+
+func (s *Impl) RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error) {
+	return nil, "", nil
+}
+
+func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error) {
+	return nil, 0, nil
+}
+
 func WrapState(s state.State, mappings StateMappings) *Impl {
 	return &Impl{
 		state:    s,
@@ -45,24 +57,40 @@ func (s *Impl) MappingNamespace(schema interface{}) (state.Key, error) {
 	return m.Namespace(), nil
 }
 
-func (s *Impl) Get(entry interface{}, target ...interface{}) (result interface{}, err error) {
+func (s *Impl) Get(entry interface{}, target ...interface{}) (interface{}, error) {
 	mapped, err := s.mappings.Map(entry)
 	if err != nil { // mapping is not exists
 		return s.state.Get(entry, target...) // return as is
 	}
 
+	// target was not set, but we can knew about target from mapping
+	if len(target) == 0 {
+		var targetFromMapping interface{}
+		if mapped.Mapper().KeyerFor() != nil {
+			targetFromMapping = mapped.Mapper().KeyerFor()
+		} else {
+			targetFromMapping = mapped.Mapper().Schema()
+		}
+		target = append(target, targetFromMapping)
+	}
+
 	return s.state.Get(mapped, target...)
 }
 
-func (s *Impl) GetInt(key interface{}, defaultValue int) (result int, err error) {
-	return s.state.GetInt(key, defaultValue)
+func (s *Impl) GetInt(entry interface{}, defaultValue int) (int, error) {
+	return s.state.GetInt(entry, defaultValue)
 }
 
-func (s *Impl) GetHistory(key interface{}, target interface{}) (result state.HistoryEntryList, err error) {
-	return s.state.GetHistory(key, target)
+func (s *Impl) GetHistory(entry interface{}, target interface{}) (state.HistoryEntryList, error) {
+	mapped, err := s.mappings.Map(entry)
+	if err != nil { // mapping is not exists
+		return s.state.GetHistory(entry, target) // return as is
+	}
+
+	return s.state.GetHistory(mapped, target)
 }
 
-func (s *Impl) Exists(entry interface{}) (exists bool, err error) {
+func (s *Impl) Exists(entry interface{}) (bool, error) {
 	mapped, err := s.mappings.Map(entry)
 	if err != nil { // mapping is not exists
 		return s.state.Exists(entry) // return as is
@@ -71,7 +99,7 @@ func (s *Impl) Exists(entry interface{}) (exists bool, err error) {
 	return s.state.Exists(mapped)
 }
 
-func (s *Impl) Put(entry interface{}, value ...interface{}) (err error) {
+func (s *Impl) Put(entry interface{}, value ...interface{}) error {
 	mapped, err := s.mappings.Map(entry)
 	if err != nil { // mapping is not exists
 		return s.state.Put(entry, value...) // return as is
@@ -79,7 +107,7 @@ func (s *Impl) Put(entry interface{}, value ...interface{}) (err error) {
 
 	keyRefs, err := mapped.Keys() // additional keys
 	if err != nil {
-		return
+		return err
 	}
 
 	// delete previous key refs if key exists
@@ -94,7 +122,7 @@ func (s *Impl) Put(entry interface{}, value ...interface{}) (err error) {
 	return s.state.Put(mapped)
 }
 
-func (s *Impl) Insert(entry interface{}, value ...interface{}) (err error) {
+func (s *Impl) Insert(entry interface{}, value ...interface{}) error {
 	mapped, err := s.mappings.Map(entry)
 	if err != nil { // mapping is not exists
 		return s.state.Insert(entry, value...) // return as is
@@ -102,7 +130,7 @@ func (s *Impl) Insert(entry interface{}, value ...interface{}) (err error) {
 
 	keyRefs, err := mapped.Keys() // additional keys
 	if err != nil {
-		return
+		return err
 	}
 
 	// insert uniq key refs. if key already exists - error returned
@@ -115,27 +143,20 @@ func (s *Impl) Insert(entry interface{}, value ...interface{}) (err error) {
 	return s.state.Insert(mapped)
 }
 
-func (s *Impl) List(namespace interface{}, target ...interface{}) (result interface{}, err error) {
-	if s.mappings.Exists(namespace) {
-		m, err := s.mappings.Get(namespace)
-		if err != nil {
-			return nil, errors.Wrap(err, `mapping`)
-		}
-
-		namespace = m.Namespace()
-		s.Logger().Debugf(`state mapped LIST with namespace: %s`, namespace)
-		target = targetFromMapping(m)
+func (s *Impl) List(entry interface{}, target ...interface{}) (interface{}, error) {
+	if !s.mappings.Exists(entry) {
+		return s.state.List(entry, target...)
 	}
 
-	return s.state.List(namespace, target...)
-}
-
-func targetFromMapping(m StateMapper) (target []interface{}) {
-	target = []interface{}{m.Schema()}
-	if list := m.List(); list != nil {
-		target = append(target, list)
+	m, err := s.mappings.Get(entry)
+	if err != nil {
+		return nil, errors.Wrap(err, `mapping`)
 	}
-	return
+
+	namespace := m.Namespace()
+	s.Logger().Debugf(`state mapped LIST with namespace: %s`, namespace)
+
+	return s.state.List(namespace, m.Schema(), m.List())
 }
 
 func (s *Impl) ListWith(entry interface{}, key state.Key) (result interface{}, err error) {
@@ -150,7 +171,7 @@ func (s *Impl) ListWith(entry interface{}, key state.Key) (result interface{}, e
 	namespace := m.Namespace()
 	s.Logger().Debugf(`state mapped LIST with namespace: %s`, namespace, namespace.Append(key))
 
-	return s.state.List(namespace.Append(key), targetFromMapping(m)...)
+	return s.state.List(namespace.Append(key), m.Schema(), m.List())
 }
 
 func (s *Impl) GetByUniqKey(
@@ -168,11 +189,36 @@ func (s *Impl) GetByUniqKey(
 	return s.state.Get(keyRef.(*schema.KeyRef).PKey, target...)
 }
 
-func (s *Impl) Delete(entry interface{}) (err error) {
-
+func (s *Impl) Delete(entry interface{}) error {
 	mapped, err := s.mappings.Map(entry)
 	if err != nil { // mapping is not exists
 		return s.state.Delete(entry) // return as is
+	}
+
+	// Entry can be record to delete or reference to record
+	// If entry is keyer entity for another entry (reference)
+	if mapped.Mapper().KeyerFor() != nil {
+		referenceEntry, err := s.Get(entry)
+		if err != nil {
+			return err
+		}
+
+		mapped, err = s.mappings.Map(referenceEntry)
+		if err != nil {
+			return err
+		}
+	}
+
+	keyRefs, err := mapped.Keys() // additional keys
+	if err != nil {
+		return err
+	}
+
+	// delete uniq key refs
+	for _, kr := range keyRefs {
+		if err = s.state.Delete(kr); err != nil {
+			return errors.Wrap(err, `delete ref key`)
+		}
 	}
 
 	return s.state.Delete(mapped)
@@ -214,18 +260,17 @@ func (s *Impl) DeletePrivate(collection string, entry interface{}) (err error) {
 }
 
 func (s *Impl) ListPrivate(collection string, usePrivateDataIterator bool, namespace interface{}, target ...interface{}) (result interface{}, err error) {
-	if s.mappings.Exists(namespace) {
-		m, err := s.mappings.Get(namespace)
-		if err != nil {
-			return nil, errors.Wrap(err, `mapping`)
-		}
-
-		namespace = m.Namespace()
-		s.Logger().Debugf(`private state mapped LIST with namespace: %s`, namespace)
-		target = targetFromMapping(m)
+	if !s.mappings.Exists(namespace) {
+		return s.state.ListPrivate(collection, usePrivateDataIterator, namespace, target...)
+	}
+	m, err := s.mappings.Get(namespace)
+	if err != nil {
+		return nil, errors.Wrap(err, `mapping`)
 	}
 
-	return s.state.ListPrivate(collection, usePrivateDataIterator, namespace, target...)
+	namespace = m.Namespace()
+	s.Logger().Debugf(`private state mapped LIST with namespace: %s`, namespace)
+	return s.state.ListPrivate(collection, usePrivateDataIterator, namespace, target[0], m.List())
 }
 
 func (s *Impl) InsertPrivate(collection string, entry interface{}, value ...interface{}) (err error) {

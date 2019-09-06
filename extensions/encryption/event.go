@@ -5,8 +5,8 @@ import (
 
 	"github.com/hyperledger/fabric/protos/peer"
 	"github.com/pkg/errors"
-	"github.com/s7techlab/cckit/router"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/router"
+	"github.com/optherium/cckit/state"
 )
 
 // EventWithTransientKey creates encrypted event wrapper with provided key for symmetric encryption/decryption

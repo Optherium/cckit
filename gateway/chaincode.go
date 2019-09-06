@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/hyperledger/fabric/protos/peer"
-	"github.com/s7techlab/cckit/convert"
-	"github.com/s7techlab/cckit/gateway/service"
+	"github.com/optherium/cckit/convert"
+	"github.com/optherium/cckit/gateway/service"
 )
 
 type Action string
@@ -14,6 +14,20 @@ const (
 	Query  Action = `query`
 	Invoke Action = `invoke`
 )
+
+// Chaincode interface for work with chaincode
+type Chaincode interface {
+	Query(ctx context.Context, fn string, args []interface{}, target interface{}) (interface{}, error)
+	Invoke(ctx context.Context, fn string, args []interface{}, target interface{}) (interface{}, error)
+	Events(ctx context.Context) (ChaincodeEventSub, error)
+}
+
+type ChaincodeEventSub interface {
+	Context() context.Context
+	Events() <-chan *peer.ChaincodeEvent
+	Recv(*peer.ChaincodeEvent) error
+	Close()
+}
 
 type chaincode struct {
 	Service   service.Chaincode
@@ -25,13 +39,6 @@ type chaincode struct {
 	OutputOpts  []OutputOpt
 	EventOpts   []EventOpt
 }
-
-type Opt func(*chaincode)
-
-type ContextOpt func(ctx context.Context) context.Context
-type InputOpt func(action Action, input *service.ChaincodeInput) error
-type OutputOpt func(action Action, response *peer.Response) error
-type EventOpt func(event *peer.ChaincodeEvent) error
 
 func NewChaincode(service service.Chaincode, channelName, chaincodeName string, opts ...Opt) *chaincode {
 	c := &chaincode{

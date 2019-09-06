@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/s7techlab/cckit/state"
-	"github.com/s7techlab/cckit/state/testdata/schema"
+	"github.com/optherium/cckit/state"
+	"github.com/optherium/cckit/state/testdata/schema"
 
-	"github.com/s7techlab/cckit/state/testdata"
+	"github.com/optherium/cckit/state/testdata"
 
-	examplecert "github.com/s7techlab/cckit/examples/cert"
-	testcc "github.com/s7techlab/cckit/testing"
-	expectcc "github.com/s7techlab/cckit/testing/expect"
+	examplecert "github.com/optherium/cckit/examples/cert"
+	testcc "github.com/optherium/cckit/testing"
+	expectcc "github.com/optherium/cckit/testing/expect"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

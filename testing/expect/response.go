@@ -8,7 +8,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
 	g "github.com/onsi/gomega"
-	"github.com/s7techlab/cckit/convert"
+	"github.com/optherium/cckit/convert"
 )
 
 // ResponseOk expects peer.Response has shim.OK status and message has okSubstr prefix
@@ -31,6 +31,12 @@ func ResponseError(response peer.Response, errorSubstr ...interface{}) peer.Resp
 	}
 
 	return response
+}
+
+func ResponseErrorWithCode(response peer.Response, error interface{}, code int32) {
+	g.Expect(int32(response.Status)).To(g.Equal(code), response.Message)
+	g.Expect(response.Message).To(g.HavePrefix(fmt.Sprintf(`%s`, error)),
+		"error message not match: "+response.Message)
 }
 
 // PayloadIs expects peer.Response payload can be marshalled to target interface{} and returns converted value
@@ -66,17 +72,4 @@ func PayloadInt(response peer.Response, expectedValue int) int {
 	g.Expect(err).To(g.BeNil())
 	g.Expect(d).To(g.Equal(expectedValue))
 	return d
-}
-
-// EventPayloadIs expects peer.ChaincodeEvent payload can be marshaled to
-// target interface{} and returns converted value
-func EventPayloadIs(event *peer.ChaincodeEvent, target interface{}) interface{} {
-	g.Expect(event).NotTo(g.BeNil())
-	data, err := convert.FromBytes(event.Payload, target)
-	description := ``
-	if err != nil {
-		description = err.Error()
-	}
-	g.Expect(err).To(g.BeNil(), description)
-	return data
 }

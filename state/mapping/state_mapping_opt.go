@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/s7techlab/cckit/state"
+	"github.com/optherium/cckit/state"
 )
 
 // StateNamespace sets namespace for mapping
@@ -16,9 +16,9 @@ func StateNamespace(namespace state.Key) StateMappingOpt {
 	}
 }
 
-func IsKeyerSchema() StateMappingOpt {
+func KeyerFor(schema interface{}) StateMappingOpt {
 	return func(sm *StateMapping, smm StateMappings) {
-		sm.isKeyerSchema = true
+		sm.keyerForSchema = schema
 	}
 }
 
@@ -48,7 +48,7 @@ func PKeySchema(pkeySchema interface{}) StateMappingOpt {
 		sm.primaryKeyer = attrsPKeyer(attrs)
 
 		//add mapping namespace for id schema same as schema
-		smm.Add(pkeySchema, StateNamespace(SchemaNamespace(sm.schema)), PKeyAttr(attrs...), IsKeyerSchema())
+		smm.Add(pkeySchema, StateNamespace(SchemaNamespace(sm.schema)), PKeyAttr(attrs...), KeyerFor(sm.schema))
 	}
 }
 
@@ -58,14 +58,29 @@ func PKeyAttr(attrs ...string) StateMappingOpt {
 	}
 }
 
+// PKeyId use Id attr as source for mapped state entry key
 func PKeyId() StateMappingOpt {
 	return PKeyAttr(`Id`)
 }
 
+// PKeyConst use constant as state entry key
+func PKeyConst(key state.Key) StateMappingOpt {
+	return func(sm *StateMapping, smm StateMappings) {
+		sm.primaryKeyer = func(instance interface{}) (state.Key, error) {
+			return key, nil
+		}
+	}
+}
+
+// PKeyComplexId sets Id as key field, also adds mapping for pkeySchema
+// with namespace from mapping schema
 func PKeyComplexId(pkeySchema interface{}) StateMappingOpt {
 	return func(sm *StateMapping, smm StateMappings) {
 		sm.primaryKeyer = attrsPKeyer([]string{`Id`})
-		smm.Add(pkeySchema, StateNamespace(SchemaNamespace(sm.schema)), PKeyAttr(attrsFrom(pkeySchema)...), IsKeyerSchema())
+		smm.Add(pkeySchema,
+			StateNamespace(SchemaNamespace(sm.schema)),
+			PKeyAttr(attrsFrom(pkeySchema)...),
+			KeyerFor(sm.schema))
 	}
 }
 

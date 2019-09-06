@@ -1,9 +1,5 @@
 # Hyperledger Fabric chaincode kit (CCKit)
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/s7techlab/cckit)](https://goreportcard.com/report/github.com/s7techlab/cckit)
-![Build](https://api.travis-ci.org/s7techlab/cckit.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/s7techlab/cckit/badge.svg?branch=master)](https://coveralls.io/github/s7techlab/cckit?branch=master)
-
 ## Overview
 
 A [smart contract](https://hyperledger-fabric.readthedocs.io/en/latest/glossary.html#smart-contract) is code, 
@@ -32,15 +28,18 @@ and [others](docs/chaincode-examples.md)
 
 ### CCKit features 
 
-* [Centralized chaincode invocation handling](router) with methods routing and middleware capabilities 
-* [Chaincode state modelling](state) using [protocol buffers](examples/cpaper_extended) / [golang struct to json marshalling](examples/cars), with [private data support](examples/private_cars)
+* [Chaincode method router](router) with invocation handlers and middleware capabilities 
+* [Chaincode state modeling](state) using [protocol buffers](examples/cpaper_extended) / [golang struct to json marshalling](examples/cars), with [private data support](examples/private_cars)
+* Designing chaincode in [gRPC service notation](gateway) with code generation of chaincode SDK, gRPC and REST-API
 * [MockStub testing](testing), allowing to immediately receive test results
 * [Data encryption](extensions/encryption) on application level
 * Chaincode method [access control](extensions/owner)
 
 ### Publications with usage examples 
 
+* [Service-oriented Hyperledger Fabric application development using gRPC definitions](https://medium.com/coinmonks/service-oriented-hyperledger-fabric-application-development-32e66f578f9a)
 * [Hyperledger Fabric smart contract data model: protobuf to chaincode state mapping](https://medium.com/coinmonks/hyperledger-fabric-smart-contract-data-model-protobuf-to-chaincode-state-mapping-191cdcfa0b78)
+* [Hyperledger Fabric chaincode test driven development (TDD) with unit testing](https://medium.com/coinmonks/test-driven-hyperledger-fabric-golang-chaincode-development-dbec4cb78049)
 * [ERC20 token as Hyperledger Fabric Golang chaincode](https://medium.com/@viktornosov/erc20-token-as-hyperledger-fabric-golang-chaincode-d09dfd16a339)
 * [CCKit: Routing and middleware for Hyperledger Fabric Golang chaincode](https://medium.com/@viktornosov/routing-and-middleware-for-developing-hyperledger-fabric-chaincode-written-in-go-90913951bf08)
 * [Developing and testing Hyperledger Fabric smart contracts](https://habr.com/post/426705/) [RUS]
@@ -48,6 +47,9 @@ and [others](docs/chaincode-examples.md)
 ## Examples based on CCKit
 
 * [Cars](examples/cars) - car registration chaincode, *simplest* example
+* [Commercial paper, service-oriented approach](https://github.com/s7techlab/hyperledger-fabric-samples) - 
+  recommended way to start new application. Code generation radically simplifies building on-chain and off-chain applications.
+
 
 * [Commercial paper](examples/cpaper) - faithful reimplementation of the official example 
 * [Commercial paper extended example](examples/cpaper_extended) - with protobuf chaincode state schema and other features
@@ -67,7 +69,7 @@ CCKit requires Go 1.11+ with modules support
 
 ### As dependency
 
-`go get -u github.com/s7techlab/cckit`
+`go get -u github.com/optherium/cckit`
 
 ## Example - Commercial Paper chaincode
 
