@@ -36,4 +36,9 @@ var (
 	KeyNotFoundError = errors.New("state entry not found")
 
 	AlreadyExistsError = errors.New(`state key already exists`)
+
+	// Rich query related errors
+	NoQuerySelectorError = errors.New(`No selector provided for rich query`)
+
+	InvalidSortQueryError = errors.New(`Invalid syntax for sort query`)
 )
