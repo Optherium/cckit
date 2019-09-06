@@ -19,7 +19,7 @@ type (
 	}
 )
 
-func NewStateList(config ...interface{}) (sl *StateList, err error) {
+func NewStateList(config ...interface{}) *StateList {
 	var (
 		itemTarget, listTarget interface{}
 	)
@@ -30,7 +30,7 @@ func NewStateList(config ...interface{}) (sl *StateList, err error) {
 		listTarget = config[1]
 	}
 
-	return &StateList{itemTarget: itemTarget, listTarget: listTarget}, nil
+	return &StateList{itemTarget: itemTarget, listTarget: listTarget}
 }
 
 func (sl *StateList) Fill(

@@ -206,21 +206,24 @@ func (s *Impl) Key(key interface{}) (*TransformedKey, error) {
 func (s *Impl) Get(entry interface{}, config ...interface{}) (interface{}, error) {
 	key, err := s.Key(entry)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to compose key at state.Get: %s", err)
+		return nil, UnexpectedError
 	}
 
 	//bytes from state
 	s.logger.Debugf(`state GET %s`, key.String)
 	bb, err := s.stub.GetState(key.String)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to retrieve data from state by key %s: %s", key.String, err)
+		return nil, SetGetError
 	}
 	if len(bb) == 0 {
 		// config[1] default value
 		if len(config) >= 2 {
 			return config[1], nil
 		}
-		return nil, errors.Wrap(KeyError(key), ErrKeyNotFound.Error())
+		s.logger.Debugf("Key %s not found in state", key.String)
+		return nil, KeyNotFoundError
 	}
 
 	// config[0] - target type
@@ -230,7 +233,7 @@ func (s *Impl) Get(entry interface{}, config ...interface{}) (interface{}, error
 func (s *Impl) GetInt(key interface{}, defaultValue int) (int, error) {
 	val, err := s.Get(key, convert.TypeInt, defaultValue)
 	if err != nil {
-		return 0, err
+		return 0, SetGetError
 	}
 	return val.(int), nil
 }
@@ -239,12 +242,14 @@ func (s *Impl) GetInt(key interface{}, defaultValue int) (int, error) {
 func (s *Impl) GetHistory(entry interface{}, target interface{}) (HistoryEntryList, error) {
 	key, err := s.Key(entry)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to compose key at state.GetHistory: %s", err)
+		return nil, UnexpectedError
 	}
 
 	iter, err := s.stub.GetHistoryForKey(key.String)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to retrieve history from state by key %s: %s", key.String, err)
+		return nil, SetGetError
 	}
 
 	defer func() { _ = iter.Close() }()
@@ -254,11 +259,13 @@ func (s *Impl) GetHistory(entry interface{}, target interface{}) (HistoryEntryLi
 	for iter.HasNext() {
 		state, err := iter.Next()
 		if err != nil {
-			return nil, err
+			s.logger.Errorf("Unable to get next item from iterator at state.GetHistory: %s", err)
+			return nil, UnexpectedError
 		}
 		value, err := s.StateGetTransformer(state.Value, target)
 		if err != nil {
-			return nil, err
+			s.logger.Errorf("Unable to transform state entry at state.GetHistory: %s", err)
+			return nil, UnexpectedError
 		}
 
 		entry := HistoryEntry{
@@ -277,12 +284,14 @@ func (s *Impl) GetHistory(entry interface{}, target interface{}) (HistoryEntryLi
 func (s *Impl) Exists(entry interface{}) (bool, error) {
 	key, err := s.Key(entry)
 	if err != nil {
-		return false, err
+		s.logger.Errorf("Unable to compose key at state.Exists: %s", err)
+		return false, UnexpectedError
 	}
 	s.logger.Debugf(`state check EXISTENCE %s`, key.String)
 	bb, err := s.stub.GetState(key.String)
 	if err != nil {
-		return false, err
+		s.logger.Errorf("Unable to check key %s existence: %s", key.String, err)
+		return false, SetGetError
 	}
 	return len(bb) != 0, nil
 }
@@ -290,25 +299,25 @@ func (s *Impl) Exists(entry interface{}) (bool, error) {
 // List data from state using objectType prefix in composite key, trying to convert to target interface.
 // Keys -  additional components of composite key
 func (s *Impl) List(namespace interface{}, target ...interface{}) (interface{}, error) {
-	stateList, err := NewStateList(target...)
-	if err != nil {
-		return nil, err
-	}
+	stateList := NewStateList(target...)
 	key, err := NormalizeStateKey(namespace)
 	if err != nil {
-		return nil, errors.Wrap(err, `prepare list key parts`)
+		s.logger.Errorf("Unable to normalize state key at state.List: %s", err)
+		return nil, UnexpectedError
 	}
 	s.logger.Debugf(`state LIST namespace: %s`, key)
 
 	key, err = s.StateKeyTransformer(key)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to construct state key transformer: %s", err)
+		return nil, UnexpectedError
 	}
 	s.logger.Debugf(`state LIST with composite key: %s`, key)
 
 	iter, err := s.stub.GetStateByPartialCompositeKey(key[0], key[1:])
 	if err != nil {
-		return nil, errors.Wrap(err, `create list iterator`)
+		s.logger.Errorf("Unable to get state by partial composite key: %s", err)
+		return nil, SetGetError
 	}
 	defer func() { _ = iter.Close() }()
 
@@ -352,16 +361,19 @@ func (s *Impl) argKeyValue(arg interface{}, values []interface{}) (key Key, valu
 func (s *Impl) Put(entry interface{}, values ...interface{}) error {
 	entryKey, value, err := s.argKeyValue(entry, values)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to get entryKey at state.Put: %s", err)
+		return UnexpectedError
 	}
 	bb, err := s.StatePutTransformer(value)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to construct state put transfomer: %s", err)
+		return UnexpectedError
 	}
 
 	key, err := s.Key(entryKey)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to compose key at state.Put: %s", err)
+		return UnexpectedError
 	}
 
 	s.logger.Debugf(`state PUT with string key: %s`, key.String)
@@ -371,15 +383,16 @@ func (s *Impl) Put(entry interface{}, values ...interface{}) error {
 // Insert value into chaincode state, returns error if key already exists
 func (s *Impl) Insert(entry interface{}, values ...interface{}) error {
 	if exists, err := s.Exists(entry); err != nil {
-		return err
+		s.logger.Errorf("Unable to check key existence at state.Insert: %s", err)
+		return SetGetError
 	} else if exists {
-		key, _ := s.Key(entry)
-		return errors.Wrap(KeyError(key), ErrKeyAlreadyExists.Error())
+		return AlreadyExistsError
 	}
 
 	key, value, err := s.argKeyValue(entry, values)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to get entryKey at state.Insert: %s", err)
+		return UnexpectedError
 	}
 	return s.Put(key, value)
 }
@@ -388,7 +401,8 @@ func (s *Impl) Insert(entry interface{}, values ...interface{}) error {
 func (s *Impl) Delete(entry interface{}) error {
 	key, err := s.Key(entry)
 	if err != nil {
-		return errors.Wrap(err, `deleting from state`)
+		s.logger.Errorf("Unable to compose key at state.Delete: %s", err)
+		return UnexpectedError
 	}
 
 	s.logger.Debugf(`state DELETE with string key: %s`, key.String)
@@ -433,21 +447,24 @@ func StringKeyer(str string, keyer KeyerFunc) Keyer {
 func (s *Impl) GetPrivate(collection string, entry interface{}, config ...interface{}) (interface{}, error) {
 	key, err := s.Key(entry)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to compose key at state.GetPrivate: %s", err)
+		return nil, UnexpectedError
 	}
 
 	//bytes from private state
 	s.logger.Debugf(`private state GET %s`, key.String)
 	bb, err := s.stub.GetPrivateData(collection, key.String)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to get private data from state: %s", err)
+		return nil, SetGetError
 	}
 	if len(bb) == 0 {
 		// config[1] default value
 		if len(config) >= 2 {
 			return config[1], nil
 		}
-		return nil, errors.Wrap(KeyError(key), ErrKeyNotFound.Error())
+		s.logger.Debugf("Key %s not found in state", key.String)
+		return nil, KeyNotFoundError
 	}
 
 	// config[0] - target type
@@ -458,12 +475,14 @@ func (s *Impl) GetPrivate(collection string, entry interface{}, config ...interf
 func (s *Impl) ExistsPrivate(collection string, entry interface{}) (bool, error) {
 	key, err := s.Key(entry)
 	if err != nil {
-		return false, err
+		s.logger.Errorf("Unable to compose key at state.ExistsPrivate: %s", err)
+		return false, UnexpectedError
 	}
 	s.logger.Debugf(`private state check EXISTENCE %s`, key.String)
 	bb, err := s.stub.GetPrivateData(collection, key.String)
 	if err != nil {
-		return false, err
+		s.logger.Errorf("Unable to get private data for key %s: %s", key.String, err)
+		return false, SetGetError
 	}
 	return len(bb) != 0, nil
 }
@@ -473,19 +492,17 @@ func (s *Impl) ExistsPrivate(collection string, entry interface{}) (bool, error)
 // If usePrivateDataIterator is true, used private state for iterate over objects
 // if false, used public state for iterate over keys and GetPrivateData for each key
 func (s *Impl) ListPrivate(collection string, usePrivateDataIterator bool, namespace interface{}, target ...interface{}) (interface{}, error) {
-
-	stateList, err := NewStateList(target...)
-	if err != nil {
-		return nil, err
-	}
+	stateList := NewStateList(target...)
 	key, err := NormalizeStateKey(namespace)
 	if err != nil {
-		return nil, errors.Wrap(err, `prepare list key parts`)
+		s.logger.Errorf("Unable to normalize state key at state.ListPrivate: %s", err)
+		return nil, UnexpectedError
 	}
 	s.logger.Debugf(`state LIST namespace: %s`, key)
 
 	if key, err = s.StateKeyTransformer(key); err != nil {
-		return nil, err
+		s.logger.Errorf("Unable to construct state key transformer: %s", err)
+		return nil, UnexpectedError
 	}
 	s.logger.Debugf(`state LIST with composite key: %s`, key)
 
@@ -500,7 +517,8 @@ func (s *Impl) ListPrivate(collection string, usePrivateDataIterator bool, names
 
 	iter, err := s.stub.GetStateByPartialCompositeKey(key[0], key[1:])
 	if err != nil {
-		return nil, errors.Wrap(err, `create list iterator`)
+		s.logger.Errorf("Unable to get state by partial composite key: %s", err)
+		return nil, SetGetError
 	}
 	defer func() { _ = iter.Close() }()
 
@@ -511,15 +529,18 @@ func (s *Impl) ListPrivate(collection string, usePrivateDataIterator bool, names
 	)
 	for iter.HasNext() {
 		if kv, err = iter.Next(); err != nil {
-			return nil, errors.Wrap(err, `get key value`)
+			s.logger.Errorf("Unable to get next item from iterator at state.ListPrivate: %s", err)
+			return nil, UnexpectedError
 		}
 		if objKey, keyParts, err = s.stub.SplitCompositeKey(kv.Key); err != nil {
-			return nil, err
+			s.logger.Errorf("Unable to split composite key: %s", err)
+			return nil, UnexpectedError
 		}
 
 		object, err := s.GetPrivate(collection, append([]string{objKey}, keyParts...), target...)
 		if err != nil {
-			return nil, err
+			s.logger.Errorf("Unable to get private data from state at state.ListPrivate: %s", err)
+			return nil, SetGetError
 		}
 		stateList.AddElementToList(object)
 	}
@@ -531,16 +552,19 @@ func (s *Impl) ListPrivate(collection string, usePrivateDataIterator bool, names
 func (s *Impl) PutPrivate(collection string, entry interface{}, values ...interface{}) (err error) {
 	entryKey, value, err := s.argKeyValue(entry, values)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to get entryKey at state.PutPrivate: %s", err)
+		return UnexpectedError
 	}
 	bb, err := s.StatePutTransformer(value)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to construct state put transfomer: %s", err)
+		return UnexpectedError
 	}
 
 	key, err := s.Key(entryKey)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to compose key at state.Put: %s", err)
+		return UnexpectedError
 	}
 
 	s.logger.Debugf(`state PUT with string key: %s`, key.String)
@@ -550,15 +574,16 @@ func (s *Impl) PutPrivate(collection string, entry interface{}, values ...interf
 // Insert value into chaincode private state, returns error if key already exists
 func (s *Impl) InsertPrivate(collection string, entry interface{}, values ...interface{}) (err error) {
 	if exists, err := s.ExistsPrivate(collection, entry); err != nil {
-		return err
+		s.logger.Errorf("Unable to check key existence at state.InsertPrivate: %s", err)
+		return SetGetError
 	} else if exists {
-		strKey, _ := s.Key(entry)
-		return errors.Wrap(KeyError(strKey), ErrKeyAlreadyExists.Error())
+		return AlreadyExistsError
 	}
 
 	key, value, err := s.argKeyValue(entry, values)
 	if err != nil {
-		return err
+		s.logger.Errorf("Unable to get entryKey at state.Insert: %s", err)
+		return UnexpectedError
 	}
 	return s.PutPrivate(collection, key, value)
 }
@@ -567,7 +592,8 @@ func (s *Impl) InsertPrivate(collection string, entry interface{}, values ...int
 func (s *Impl) DeletePrivate(collection string, entry interface{}) error {
 	key, err := s.Key(entry)
 	if err != nil {
-		return errors.Wrap(err, `deleting from private state`)
+			s.logger.Errorf("Unable to compose key at state.DeletePrivate: %s", err)
+			return UnexpectedError
 	}
 	s.logger.Debugf(`private state DELETE with string key: %s`, key.String)
 	return s.stub.DelPrivateData(collection, key.String)
@@ -584,7 +610,7 @@ func (s *Impl) PaginateList(objectType interface{}, target interface{}, limit in
 	iter, meta, err := s.stub.GetStateByPartialCompositeKeyWithPagination(key.Parts[0], key.Parts[1:], limit, start)
 
 	if err != nil {
-		s.logger.Error("Unable to get state iterator at state.PaginateList: %s", err)
+		s.logger.Errorf("Unable to get state iterator at state.PaginateList: %s", err)
 		return nil, "", SetGetError
 	}
 
@@ -597,14 +623,14 @@ func (s *Impl) PaginateList(objectType interface{}, target interface{}, limit in
 		v, err := iter.Next()
 
 		if err != nil {
-			s.logger.Error("Unable to get next item from iterator at state.PaginateList: %s", err)
+			s.logger.Errorf("Unable to get next item from iterator at state.PaginateList: %s", err)
 			return nil, "", UnexpectedError
 		}
 
 		entry, err := s.StateGetTransformer(v.Value, target)
 
 		if err != nil {
-			s.logger.Error("Unable to transform state entry at state.PaginateList: %s", err)
+			s.logger.Errorf("Unable to transform state entry at state.PaginateList: %s", err)
 			return nil, "", UnexpectedError
 		}
 
@@ -631,13 +657,13 @@ func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]inte
 			v, err := iter.Next()
 
 			if err != nil {
-				s.logger.Error("Unable to get next item from iterator at state.RichQuery: %s", err)
+				s.logger.Errorf("Unable to get next item from iterator at state.RichQuery: %s", err)
 				return nil, 0, UnexpectedError
 			}
 
 			entry, err := s.StateGetTransformer(v.Value, target)
 			if err != nil {
-				s.logger.Error("Unable to transform state entry at state.RichQuery: %s", err)
+				s.logger.Errorf("Unable to transform state entry at state.RichQuery: %s", err)
 				return nil, 0, UnexpectedError
 			}
 
@@ -667,14 +693,14 @@ func (s *Impl) RichListQuery(query string, target interface{}, pageSize int32, b
 		v, err := iter.Next()
 
 		if err != nil {
-			s.logger.Error("Unable to get next item from iterator at state.RichListQuery: %s", err)
+			s.logger.Errorf("Unable to get next item from iterator at state.RichListQuery: %s", err)
 			return nil, "", UnexpectedError
 		}
 
 		entry, err := s.StateGetTransformer(v.Value, target)
 
 		if err != nil {
-			s.logger.Error("Unable to transform state entry at state.RichListQuery: %s", err)
+			s.logger.Errorf("Unable to transform state entry at state.RichListQuery: %s", err)
 			return nil, "", UnexpectedError
 		}
 

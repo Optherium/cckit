@@ -296,7 +296,7 @@ var _ = Describe(`Router`, func() {
 		It("Disallow to get non existent payment by type and id providing encrypting key in transient map", func() {
 			// key in error is not encrypted
 			expectcc.ResponseError(encCCInvoker.From(actors[`owner`]).Query(`paymentGet`, pType, pID1+`NoExists`),
-				state.ErrKeyNotFound.Error()+`: Payment | SALE | id-1NoExists`)
+				state.KeyNotFoundError)
 		})
 
 		It("Allow to get payment by type and id", func() {

@@ -32,4 +32,8 @@ var (
 	UnexpectedError = errors.New(`unexpected error`)
 
 	SetGetError = errors.New(`set/get error`)
+
+	KeyNotFoundError = errors.New("state entry not found")
+
+	AlreadyExistsError = errors.New(`state key already exists`)
 )
