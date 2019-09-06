@@ -29,6 +29,18 @@ type (
 	}
 )
 
+func (s *Impl) PaginateList(objectType interface{}, target interface{}, pageSize int32, start string) (result []interface{}, end string, err error) {
+	return nil, "", nil
+}
+
+func (s *Impl) RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error) {
+	return nil, "", nil
+}
+
+func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error) {
+	return nil, 0, nil
+}
+
 func WrapState(s state.State, mappings StateMappings) *Impl {
 	return &Impl{
 		state:    s,

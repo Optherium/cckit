@@ -28,4 +28,8 @@ var (
 
 	// ErrKeyPartsLength can occurs when trying to create key consisting of zero parts
 	ErrKeyPartsLength = errors.New(`key parts length must be greater than zero`)
+
+	UnexpectedError = errors.New(`unexpected error`)
+
+	SetGetError = errors.New(`set/get error`)
 )
