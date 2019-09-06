@@ -14,4 +14,6 @@ var (
 
 	// ErrHandlerError error in handler
 	ErrHandlerError = errors.New(`router handler error`)
+
+	UnexpectedError = errors.New(`unexpected error`)
 )
