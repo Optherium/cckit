@@ -7,6 +7,7 @@ import (
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
+	. "github.com/optherium/cckit/errors"
 	"github.com/optherium/cckit/response"
 )
 

@@ -3,6 +3,7 @@ package state
 import (
 	"encoding/json"
 	"fmt"
+	. "github.com/optherium/cckit/errors"
 	"reflect"
 	"strings"
 )

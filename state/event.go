@@ -3,6 +3,7 @@ package state
 import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/optherium/cckit/convert"
+	. "github.com/optherium/cckit/errors"
 )
 
 type (

@@ -9,12 +9,12 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/hyperledger/fabric/protos/peer"
+	. "github.com/optherium/cckit/errors"
 	examplecert "github.com/optherium/cckit/examples/cert"
 	"github.com/optherium/cckit/examples/payment"
 	"github.com/optherium/cckit/examples/payment/schema"
 	"github.com/optherium/cckit/extensions/encryption"
 	"github.com/optherium/cckit/extensions/encryption/testdata"
-	"github.com/optherium/cckit/state"
 	"github.com/optherium/cckit/state/mapping"
 	testcc "github.com/optherium/cckit/testing"
 	expectcc "github.com/optherium/cckit/testing/expect"
@@ -296,7 +296,7 @@ var _ = Describe(`Router`, func() {
 		It("Disallow to get non existent payment by type and id providing encrypting key in transient map", func() {
 			// key in error is not encrypted
 			expectcc.ResponseError(encCCInvoker.From(actors[`owner`]).Query(`paymentGet`, pType, pID1+`NoExists`),
-				state.KeyNotFoundError)
+				ErrKeyNotFound)
 		})
 
 		It("Allow to get payment by type and id", func() {

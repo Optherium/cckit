@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/optherium/cckit/state"
+	. "github.com/optherium/cckit/errors"
 	"github.com/optherium/cckit/state/testdata/schema"
 
 	"github.com/optherium/cckit/state/testdata"
@@ -89,7 +89,7 @@ var _ = Describe(`State`, func() {
 			books := expectcc.PayloadIs(booksCC.Invoke(`bookList`), &[]schema.Book{}).([]schema.Book)
 			Expect(len(books)).To(Equal(2))
 
-			expectcc.ResponseError(booksCC.Invoke(`bookGet`, testdata.Books[0].Id), state.ErrKeyNotFound)
+			expectcc.ResponseError(booksCC.Invoke(`bookGet`, testdata.Books[0].Id), ErrKeyNotFound)
 		})
 	})
 

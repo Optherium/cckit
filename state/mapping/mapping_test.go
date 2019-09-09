@@ -8,6 +8,7 @@ import (
 	"github.com/hyperledger/fabric/protos/peer"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/optherium/cckit/errors"
 	examplecert "github.com/optherium/cckit/examples/cert"
 	"github.com/optherium/cckit/state"
 	"github.com/optherium/cckit/state/mapping"
@@ -90,7 +91,7 @@ var _ = Describe(`Mapping`, func() {
 			// errored obn checkong primary key
 			expectcc.ResponseError(
 				protoCC.Invoke(`issue`, &issueMockExistingPrimary),
-				state.ErrKeyAlreadyExists)
+				ErrKeyAlreadyExists)
 		})
 
 		It("Allow to get entry list", func() {
@@ -183,7 +184,7 @@ var _ = Describe(`Mapping`, func() {
 			).(*schema.ProtoEntityList)
 
 			Expect(len(cpapers.Items)).To(Equal(2))
-			expectcc.ResponseError(protoCC.Invoke(`get`, toDelete), state.ErrKeyNotFound)
+			expectcc.ResponseError(protoCC.Invoke(`get`, toDelete), ErrKeyNotFound)
 		})
 
 		It("Allow to insert entry once more time", func() {

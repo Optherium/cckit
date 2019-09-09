@@ -3,10 +3,10 @@ package cars_test
 import (
 	"testing"
 
+	. "github.com/optherium/cckit/errors"
 	"github.com/optherium/cckit/examples/cars"
 	examplecert "github.com/optherium/cckit/examples/cert"
 	"github.com/optherium/cckit/extensions/owner"
-	"github.com/optherium/cckit/state"
 	testcc "github.com/optherium/cckit/testing"
 	expectcc "github.com/optherium/cckit/testing/expect"
 
@@ -61,7 +61,7 @@ var _ = Describe(`Cars`, func() {
 		It("Disallow authority to add duplicate information about car", func() {
 			expectcc.ResponseError(
 				cc.From(actors[`authority`]).Invoke(`carRegister`, cars.Payloads[0]),
-				state.ErrKeyAlreadyExists) //expect car id already exists
+				ErrKeyAlreadyExists) //expect car id already exists
 		})
 
 		It("Allow everyone to retrieve car information", func() {

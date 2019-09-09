@@ -8,6 +8,7 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/ledger/queryresult"
 	"github.com/optherium/cckit/convert"
+	. "github.com/optherium/cckit/errors"
 	"github.com/pkg/errors"
 )
 
@@ -223,7 +224,7 @@ func (s *Impl) Get(entry interface{}, config ...interface{}) (interface{}, error
 			return config[1], nil
 		}
 		s.logger.Debugf("Key %s not found in state", key.String)
-		return nil, KeyNotFoundError
+		return nil, ErrKeyNotFound
 	}
 
 	// config[0] - target type
@@ -386,7 +387,7 @@ func (s *Impl) Insert(entry interface{}, values ...interface{}) error {
 		s.logger.Errorf("Unable to check key existence at state.Insert: %s", err)
 		return SetGetError
 	} else if exists {
-		return AlreadyExistsError
+		return ErrKeyAlreadyExists
 	}
 
 	key, value, err := s.argKeyValue(entry, values)
@@ -464,7 +465,7 @@ func (s *Impl) GetPrivate(collection string, entry interface{}, config ...interf
 			return config[1], nil
 		}
 		s.logger.Debugf("Key %s not found in state", key.String)
-		return nil, KeyNotFoundError
+		return nil, ErrKeyNotFound
 	}
 
 	// config[0] - target type
@@ -577,7 +578,7 @@ func (s *Impl) InsertPrivate(collection string, entry interface{}, values ...int
 		s.logger.Errorf("Unable to check key existence at state.InsertPrivate: %s", err)
 		return SetGetError
 	} else if exists {
-		return AlreadyExistsError
+		return ErrKeyAlreadyExists
 	}
 
 	key, value, err := s.argKeyValue(entry, values)
@@ -592,8 +593,8 @@ func (s *Impl) InsertPrivate(collection string, entry interface{}, values ...int
 func (s *Impl) DeletePrivate(collection string, entry interface{}) error {
 	key, err := s.Key(entry)
 	if err != nil {
-			s.logger.Errorf("Unable to compose key at state.DeletePrivate: %s", err)
-			return UnexpectedError
+		s.logger.Errorf("Unable to compose key at state.DeletePrivate: %s", err)
+		return UnexpectedError
 	}
 	s.logger.Debugf(`private state DELETE with string key: %s`, key.String)
 	return s.stub.DelPrivateData(collection, key.String)

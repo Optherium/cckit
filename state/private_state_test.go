@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/optherium/cckit/state"
+	. "github.com/optherium/cckit/errors"
 	"github.com/optherium/cckit/state/testdata/schema"
 
 	"github.com/optherium/cckit/state/testdata"
@@ -87,7 +87,7 @@ var _ = Describe(`PrivateState`, func() {
 			books := expectcc.PayloadIs(booksCC.Invoke(`privateBookList`), &[]schema.PrivateBook{}).([]schema.PrivateBook)
 			Expect(len(books)).To(Equal(2))
 
-			expectcc.ResponseError(booksCC.Invoke(`privateBookGet`, testdata.PrivateBooks[0].Id), state.ErrKeyNotFound)
+			expectcc.ResponseError(booksCC.Invoke(`privateBookGet`, testdata.PrivateBooks[0].Id), ErrKeyNotFound)
 		})
 	})
 
