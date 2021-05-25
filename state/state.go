@@ -656,7 +656,6 @@ func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]inte
 	for iter.HasNext() {
 		if i < pageSize {
 			v, err := iter.Next()
-
 			if err != nil {
 				s.logger.Errorf("Unable to get next item from iterator at state.RichQuery: %s", err)
 				return nil, 0, UnexpectedError
@@ -670,7 +669,7 @@ func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]inte
 
 			entries = append(entries, entry)
 		} else {
-			_, _ = iter.Next()
+			break
 		}
 		i++
 	}
