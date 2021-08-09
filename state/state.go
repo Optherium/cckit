@@ -139,7 +139,9 @@ type State interface {
 	RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error)
 
 	// RichQuery allows to perform rich state DB query using state DB syntax
-	RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error)
+	RichQuery(query string, target interface{}, pageSize int) ([]interface{}, error)
+
+	PaginateRichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error)
 }
 
 func (k Key) Append(key Key) Key {
@@ -640,8 +642,45 @@ func (s *Impl) PaginateList(objectType interface{}, target interface{}, limit in
 	return entries, end, nil
 }
 
-func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error) {
+func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, error) {
 	iter, err := s.stub.GetQueryResult(query)
+	if err != nil {
+		s.logger.Errorf("Unable to get query result at state.RichQuery: %s", err)
+		return nil, SetGetError
+	}
+
+	entries := make([]interface{}, 0)
+
+	defer func() { _ = iter.Close() }()
+
+	i := 0
+
+	for iter.HasNext() {
+		if i < pageSize {
+			v, err := iter.Next()
+			if err != nil {
+				s.logger.Errorf("Unable to get next item from iterator at state.RichQuery: %s", err)
+				return nil, UnexpectedError
+			}
+
+			entry, err := s.StateGetTransformer(v.Value, target)
+			if err != nil {
+				s.logger.Errorf("Unable to transform state entry at state.RichQuery: %s", err)
+				return nil, UnexpectedError
+			}
+
+			entries = append(entries, entry)
+		} else {
+			break
+		}
+		i++
+	}
+
+	return entries, nil
+}
+
+func (s *Impl) PaginateRichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error) {
+	iter, meta, err := s.stub.GetQueryResultWithPagination(query, int32(pageSize), "")
 	if err != nil {
 		s.logger.Errorf("Unable to get query result at state.RichQuery: %s", err)
 		return nil, 0, SetGetError
@@ -674,7 +713,7 @@ func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]inte
 		i++
 	}
 
-	return entries, i, nil
+	return entries, int(meta.FetchedRecordsCount), nil
 }
 
 func (s *Impl) RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error) {
