@@ -34,7 +34,7 @@ type (
 		// Time returns txTimesta
 		Time() (time.Time, error)
 
-		ReplaceArgs(args [][]byte) Context // replace args, for usage in preMiddleware
+		ReplaceArgs(args [][]byte) Context // replace args, for usage in PreMiddleware
 		GetArgs() [][]byte
 
 		// Deprecated: Use Params instead.
@@ -168,7 +168,7 @@ func (c *context) Time() (time.Time, error) {
 	return time.Unix(txTimestamp.GetSeconds(), int64(txTimestamp.GetNanos())), nil
 }
 
-// ReplaceArgs replace args, for usage in preMiddleware
+// ReplaceArgs replace args, for usage in PreMiddleware
 func (c *context) ReplaceArgs(args [][]byte) Context {
 	c.args = args
 	return c
