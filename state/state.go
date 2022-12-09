@@ -139,7 +139,7 @@ type State interface {
 	RichListQuery(query string, target interface{}, pageSize int32, bookmark string) (result []interface{}, newBookmark string, err error)
 
 	// RichQuery allows to perform rich state DB query using state DB syntax
-	RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error)
+	RichQuery(query *QueryBuilder, target interface{}, pageSize int) ([]interface{}, int, error)
 }
 
 func (k Key) Append(key Key) Key {
@@ -640,7 +640,11 @@ func (s *Impl) PaginateList(objectType interface{}, target interface{}, limit in
 	return entries, end, nil
 }
 
-func (s *Impl) RichQuery(query string, target interface{}, pageSize int) ([]interface{}, int, error) {
+func (s *Impl) RichQuery(qb *QueryBuilder, target interface{}, pageSize int) ([]interface{}, int, error) {
+	query, err := qb.Build()
+	if err != nil {
+		return nil, 0, err
+	}
 	iter, err := s.stub.GetQueryResult(query)
 	if err != nil {
 		s.logger.Errorf("Unable to get query result at state.RichQuery: %s", err)
