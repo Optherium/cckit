@@ -10,20 +10,20 @@ import (
 
 // QueryBuilder used to generate couchDB queries
 type QueryBuilder struct {
-	ids          []string
-	fields       []string
-	docType      string
-	filters      map[string]interface{}
-	conditions   map[string]interface{}
-	combinations []*Combination
-	sort         []map[string]string
-	hasSelector  bool
-	hasLimit     bool
-	hasSkip      bool
-	hasIndex     bool
-	limit        int
-	skip         int
-	index        string
+	Ids          []string
+	Fields       []string
+	DocType      string
+	Filters      map[string]interface{}
+	Conditions   map[string]interface{}
+	Combinations []*Combination
+	Sort         []map[string]string
+	HasSelector  bool
+	HasLimit     bool
+	HasSkip      bool
+	HasIndex     bool
+	Limit        int
+	Skip         int
+	Index        string
 }
 
 // Filter used to filter on a single field
@@ -59,15 +59,15 @@ const (
 // NewQB create a new instance of the QueryBuilder
 func NewQB() *QueryBuilder {
 	return &QueryBuilder{
-		filters:    make(map[string]interface{}),
-		conditions: make(map[string]interface{}),
+		Filters:    make(map[string]interface{}),
+		Conditions: make(map[string]interface{}),
 	}
 }
 
 // Build constructs the query and outputs the final result
 func (builder *QueryBuilder) Build() (string, error) {
 
-	if !builder.hasSelector {
+	if !builder.HasSelector {
 		return "", NoQuerySelectorError
 	}
 
@@ -75,12 +75,12 @@ func (builder *QueryBuilder) Build() (string, error) {
 	queryMap := map[string]interface{}{}
 
 	// add fields
-	if len(builder.fields) > 0 {
-		queryMap["fields"] = builder.fields
+	if len(builder.Fields) > 0 {
+		queryMap["fields"] = builder.Fields
 	}
 
 	// add selector
-	if builder.hasSelector {
+	if builder.HasSelector {
 		queryMap["selector"] = map[string]interface{}{}
 
 		selector := queryMap["selector"]
@@ -90,49 +90,49 @@ func (builder *QueryBuilder) Build() (string, error) {
 		}
 
 		// add doc type
-		if builder.docType != "" {
-			selectorMap["docType"] = builder.docType
+		if builder.DocType != "" {
+			selectorMap["docType"] = builder.DocType
 		}
 
 		// add filters
-		if len(builder.filters) > 0 {
-			for k, v := range builder.filters {
+		if len(builder.Filters) > 0 {
+			for k, v := range builder.Filters {
 				selectorMap[k] = v
 			}
 		}
 
 		// add conditions
-		if len(builder.conditions) > 0 {
-			for k, v := range builder.conditions {
+		if len(builder.Conditions) > 0 {
+			for k, v := range builder.Conditions {
 				selectorMap[k] = v
 			}
 		}
 
 		// combinations
-		if len(builder.combinations) > 0 {
-			for _, combination := range builder.combinations {
+		if len(builder.Combinations) > 0 {
+			for _, combination := range builder.Combinations {
 				addCombinationToRoot(selectorMap, combination)
 			}
 		}
 	}
 
 	// add sort
-	if len(builder.sort) > 0 {
-		queryMap["sort"] = builder.sort
+	if len(builder.Sort) > 0 {
+		queryMap["sort"] = builder.Sort
 	}
 
 	// add limit
-	if builder.hasLimit {
-		queryMap["limit"] = builder.limit
+	if builder.HasLimit {
+		queryMap["limit"] = builder.Limit
 	}
 
 	// add skip
-	if builder.hasSkip {
-		queryMap["skip"] = builder.skip
+	if builder.HasSkip {
+		queryMap["skip"] = builder.Skip
 	}
 
-	if builder.hasIndex {
-		queryMap["use_index"] = builder.index
+	if builder.HasIndex {
+		queryMap["use_index"] = builder.Index
 	}
 
 	bytes, err := json.Marshal(&queryMap)
@@ -144,49 +144,49 @@ func (builder *QueryBuilder) Build() (string, error) {
 
 // AddField adds a field to the couchDB query
 func (builder *QueryBuilder) AddField(fields ...string) *QueryBuilder {
-	builder.fields = append(builder.fields, fields...)
+	builder.Fields = append(builder.Fields, fields...)
 	return builder
 }
 
 func (builder *QueryBuilder) AddUseIndex(index string) *QueryBuilder {
-	builder.index = index
-	builder.hasIndex = true
+	builder.Index = index
+	builder.HasIndex = true
 
 	return builder
 }
 
 // AddFilter adds a filter to filter on in the couchDB query
 func (builder *QueryBuilder) AddFilter(field string, value interface{}) *QueryBuilder {
-	builder.filters[field] = value
-	builder.hasSelector = true
+	builder.Filters[field] = value
+	builder.HasSelector = true
 	return builder
 }
 
 // SetDocType set the main doc type for the couchDB query
 func (builder *QueryBuilder) SetDocType(docType string) *QueryBuilder {
-	builder.docType = docType
-	builder.hasSelector = true
+	builder.DocType = docType
+	builder.HasSelector = true
 	return builder
 }
 
 // SetLimit sets the limit for paging
 func (builder *QueryBuilder) SetLimit(limit int) *QueryBuilder {
-	builder.limit = limit
-	builder.hasLimit = true
+	builder.Limit = limit
+	builder.HasLimit = true
 	return builder
 }
 
 // SetSkip sets the skip value for paging
 func (builder *QueryBuilder) SetSkip(skip int) *QueryBuilder {
-	builder.skip = skip
-	builder.hasSkip = true
+	builder.Skip = skip
+	builder.HasSkip = true
 	return builder
 }
 
 // AddCondition adds a pre-defined CouchDB condition filter to the CouchDB query
 func (builder *QueryBuilder) AddCondition(field string, condition interface{}) *QueryBuilder {
-	builder.conditions[field] = condition
-	builder.hasSelector = true
+	builder.Conditions[field] = condition
+	builder.HasSelector = true
 	return builder
 }
 
@@ -194,7 +194,7 @@ func (builder *QueryBuilder) AddCondition(field string, condition interface{}) *
 func (builder *QueryBuilder) AddSort(field string, sortOrder string) *QueryBuilder {
 	sort := map[string]string{}
 	sort[field] = strings.ToLower(sortOrder)
-	builder.sort = append(builder.sort, sort)
+	builder.Sort = append(builder.Sort, sort)
 	return builder
 }
 
@@ -227,7 +227,7 @@ func (builder *QueryBuilder) AddCombination(combinationType CombinationType, fil
 		}
 	}
 
-	builder.combinations = append(builder.combinations, &combination)
+	builder.Combinations = append(builder.Combinations, &combination)
 	return &combination
 }
 

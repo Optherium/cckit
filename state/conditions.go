@@ -35,7 +35,7 @@ type ExistCondition struct {
 	Value bool `json:"$exists"`
 }
 
-// SizeCondition Special condition to match the length of an array field in a document. Non-array fields cannot match this condition.
+// SizeCondition Special condition to match the length of an array field in a document. Non-array Fields cannot match this condition.
 type SizeCondition struct {
 	Value uint `json:"$size"`
 }
